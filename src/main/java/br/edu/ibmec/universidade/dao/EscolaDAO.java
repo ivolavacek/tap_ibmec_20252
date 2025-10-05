@@ -6,7 +6,7 @@
 * @since   2012-02-29 
 */
 
-package dao;
+package br.edu.ibmec.universidade.dao;
 
 import java.util.Collection;
 import java.util.HashMap;

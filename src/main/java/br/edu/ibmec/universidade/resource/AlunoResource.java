@@ -1,4 +1,4 @@
-package resource;
+package br.edu.ibmec.universidade.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;

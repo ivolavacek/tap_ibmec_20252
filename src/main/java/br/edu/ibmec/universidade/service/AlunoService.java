@@ -1,4 +1,4 @@
-package service;
+package br.edu.ibmec.universidade.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class AlunoService {
 			dataRetorno.setDia(dataConvertida.getDay());
 			return dataRetorno;
 		} catch (Exception e) {
-			System.out.println("Erro Conversão da data: " + e.getMessage());
+			System.out.println("Erro Conversï¿½o da data: " + e.getMessage());
 			return null;
 		}
 	}

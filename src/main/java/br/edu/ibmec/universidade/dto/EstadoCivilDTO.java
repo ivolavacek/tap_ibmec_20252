@@ -1,4 +1,4 @@
-package dto;
+package br.edu.ibmec.universidade.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

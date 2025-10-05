@@ -1,4 +1,4 @@
-package resource;
+package br.edu.ibmec.universidade.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

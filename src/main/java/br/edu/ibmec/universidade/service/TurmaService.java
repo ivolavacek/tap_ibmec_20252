@@ -1,4 +1,4 @@
-package service;
+package br.edu.ibmec.universidade.service;
 
 import java.util.Collection;
 

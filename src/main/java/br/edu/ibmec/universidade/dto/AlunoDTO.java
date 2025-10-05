@@ -6,7 +6,7 @@
 * @since   2012-02-29 
 */
 
-package dto;
+package br.edu.ibmec.universidade.dto;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package entity;
+package br.edu.ibmec.universidade.entity;
 
 public class Inscricao {
 	private float avaliacao1;

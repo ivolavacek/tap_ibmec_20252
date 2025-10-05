@@ -1,4 +1,4 @@
-package exception;
+package br.edu.ibmec.universidade.exception;
 
 import java.util.ArrayList;
 

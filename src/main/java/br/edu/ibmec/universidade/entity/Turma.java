@@ -1,4 +1,4 @@
-package entity;
+package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
 import java.util.List;
