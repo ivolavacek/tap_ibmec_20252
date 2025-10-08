@@ -8,21 +8,18 @@
 
 package br.edu.ibmec.universidade.dao;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 
-import entity.Aluno;
-import entity.Curso;
-import entity.Data;
-import entity.Disciplina;
-import entity.EstadoCivil;
-import entity.Inscricao;
-import entity.Turma;
-import exception.DaoException;
+import br.edu.ibmec.universidade.entity.Aluno;
+import br.edu.ibmec.universidade.entity.Curso;
+import br.edu.ibmec.universidade.entity.Data;
+import br.edu.ibmec.universidade.entity.Disciplina;
+import br.edu.ibmec.universidade.entity.EstadoCivil;
+import br.edu.ibmec.universidade.entity.Inscricao;
+import br.edu.ibmec.universidade.entity.Turma;
+import br.edu.ibmec.universidade.exception.DaoException;
 
 public class EscolaDAO {
 
@@ -61,7 +58,7 @@ public class EscolaDAO {
 			e.printStackTrace();
 		}
 
-		Data data = new Data(10, 10, 1990);
+		Date data = new Date(10, 10, 1990);
 		Aluno aluno = new Aluno(11, "Joao da Silva", data, true,
 				EstadoCivil.solteiro, curso, telefones);
 		curso.getAlunos().add(aluno);

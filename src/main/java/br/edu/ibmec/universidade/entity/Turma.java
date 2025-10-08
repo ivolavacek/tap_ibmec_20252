@@ -2,7 +2,9 @@ package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
+@Data
 public class Turma {
 	private int codigo;
 	private int ano;
@@ -28,46 +30,6 @@ public class Turma {
 
 	public void removeInscricao(Inscricao inscricao) {
 		inscricoes.remove(inscricao);
-	}
-
-	public List<Inscricao> getInscricoes() {
-		return inscricoes;
-	}
-
-	public void setInscricoes(List<Inscricao> inscricoes) {
-		this.inscricoes = inscricoes;
-	}
-
-	public int getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-
-	public int getAno() {
-		return ano;
-	}
-
-	public void setAno(int ano) {
-		this.ano = ano;
-	}
-
-	public int getSemestre() {
-		return semestre;
-	}
-
-	public void setSemestre(int semestre) {
-		this.semestre = semestre;
-	}
-
-	public Disciplina getDisciplina() {
-		return disciplina;
-	}
-
-	public void setDisciplina(Disciplina disciplina) {
-		this.disciplina = disciplina;
 	}
 
 }

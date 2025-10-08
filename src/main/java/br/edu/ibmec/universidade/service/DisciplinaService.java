@@ -2,12 +2,12 @@ package br.edu.ibmec.universidade.service;
 
 import java.util.Collection;
 
-import dao.EscolaDAO;
-import dto.DisciplinaDTO;
-import entity.Disciplina;
-import exception.DaoException;
-import exception.ServiceException;
-import exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.dao.EscolaDAO;
+import br.edu.ibmec.universidade.dto.DisciplinaDTO;
+import br.edu.ibmec.universidade.entity.Disciplina;
+import br.edu.ibmec.universidade.exception.DaoException;
+import br.edu.ibmec.universidade.exception.ServiceException;
+import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 
 public class DisciplinaService {
 	private EscolaDAO dao;

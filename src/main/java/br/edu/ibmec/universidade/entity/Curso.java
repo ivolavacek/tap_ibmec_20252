@@ -2,7 +2,9 @@ package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
+@Data
 public class Curso {
 	private int codigo;
 	private String nome;
@@ -35,36 +37,4 @@ public class Curso {
 		disciplinas.remove(disciplina);
 	}
 
-	public List<Aluno> getAlunos() {
-		return alunos;
-	}
-
-	public void setAlunos(List<Aluno> alunos) {
-		this.alunos = alunos;
-	}
-
-	public List<Disciplina> getDisciplinas() {
-		return disciplinas;
-	}
-
-	public void setDisciplinas(List<Disciplina> disciplinas) {
-		this.disciplinas = disciplinas;
-	}
-
-	public int getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	
 }
