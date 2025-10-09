@@ -1,13 +1,16 @@
 package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import lombok.Data;
 
+@Data
 public class Aluno {
 	private int matricula;
 	private String nome;
-	private Data dataNascimento;
+	private Date dataNascimento;
 	private int idade;
 	private boolean matriculaAtiva;
 	private EstadoCivil estadoCivil;
@@ -22,7 +25,7 @@ public class Aluno {
 
 	}
 
-	public Aluno(int matricula, String nome, Data dataNascimento,
+	public Aluno(int matricula, String nome, Date dataNascimento,
 			boolean matriculaAtiva, EstadoCivil estadoCivil, Curso curso, 
 			Vector<String> telefones) {
 		this.matricula = matricula;
@@ -42,78 +45,6 @@ public class Aluno {
 
 	public void removeInscricao(Inscricao inscricao) {
 		inscricoes.remove(inscricao);
-	}
-
-	public List<Inscricao> getInscricoes() {
-		return inscricoes;
-	}
-
-	public void setInscricoes(List<Inscricao> inscricoes) {
-		this.inscricoes = inscricoes;
-	}
-
-	public int getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(int matricula) {
-		this.matricula = matricula;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public Data getDataNascimento() {
-		return dataNascimento;
-	}
-
-	public void setDataNascimento(Data dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
-
-	public int getIdade() {
-		return idade;
-	}
-
-	public void setIdade(int idade) {
-		this.idade = idade;
-	}
-
-	public boolean isMatriculaAtiva() {
-		return matriculaAtiva;
-	}
-
-	public void setMatriculaAtiva(boolean matriculaAtiva) {
-		this.matriculaAtiva = matriculaAtiva;
-	}
-
-	public EstadoCivil getEstadoCivil() {
-		return estadoCivil;
-	}
-
-	public void setEstadoCivil(EstadoCivil estadoCivil) {
-		this.estadoCivil = estadoCivil;
-	}
-
-	public Curso getCurso() {
-		return curso;
-	}
-
-	public void setCurso(Curso curso) {
-		this.curso = curso;
-	}
-
-	public Vector<String> getTelefones() {
-		return telefones;
-	}
-
-	public void setTelefones(Vector<String> telefones) {
-		this.telefones = telefones;
 	}
 
 }

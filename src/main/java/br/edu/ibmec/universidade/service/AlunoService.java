@@ -6,15 +6,15 @@ import java.util.Date;
 
 import br.edu.ibmec.universidade.dao.*
 ;
-import dao.EscolaDAO;
-import dto.AlunoDTO;
-import entity.Aluno;
-import entity.Curso;
-import entity.Data;
-import entity.EstadoCivil;
-import exception.DaoException;
-import exception.ServiceException;
-import exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.dao.EscolaDAO;
+import br.edu.ibmec.universidade.dto.AlunoDTO;
+import br.edu.ibmec.universidade.entity.Aluno;
+import br.edu.ibmec.universidade.entity.Curso;
+import br.edu.ibmec.universidade.entity.Data;
+import br.edu.ibmec.universidade.entity.EstadoCivil;
+import br.edu.ibmec.universidade.exception.DaoException;
+import br.edu.ibmec.universidade.exception.ServiceException;
+import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 
 public class AlunoService {
 	private EscolaDAO dao;
