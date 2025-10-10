@@ -14,7 +14,7 @@ import org.apache.commons.collections4.map.MultiKeyMap;
 
 import br.edu.ibmec.universidade.entity.Aluno;
 import br.edu.ibmec.universidade.entity.Curso;
-import br.edu.ibmec.universidade.entity.Data;
+import br.edu.ibmec.universidade.entity.DataNascimento;
 import br.edu.ibmec.universidade.entity.Disciplina;
 import br.edu.ibmec.universidade.entity.EstadoCivil;
 import br.edu.ibmec.universidade.entity.Inscricao;
@@ -26,8 +26,8 @@ public class EscolaDAO {
 	private Map<Integer, Aluno> alunos;
 	private Map<Integer, Curso> cursos;
 	private Map<Integer, Disciplina> disciplinas;
-	private MultiKeyMap turmas;
-	private MultiKeyMap inscricoes;
+	private MultiKeyMap<Integer, Turma> turmas;
+	private MultiKeyMap<Integer, Inscricao> inscricoes;
 
 	private static EscolaDAO instance;
 
@@ -58,7 +58,7 @@ public class EscolaDAO {
 			e.printStackTrace();
 		}
 
-		Date data = new Date(10, 10, 1990);
+		DataNascimento data = new DataNascimento(10, 10, 1990);
 		Aluno aluno = new Aluno(11, "Joao da Silva", data, true,
 				EstadoCivil.solteiro, curso, telefones);
 		curso.getAlunos().add(aluno);
@@ -159,7 +159,7 @@ public class EscolaDAO {
 		Curso curso=  cursos.get(codCurso);
 		System.out.println(curso.getAlunos());
 		return curso;
-		
+
 	}
 
 	// ok

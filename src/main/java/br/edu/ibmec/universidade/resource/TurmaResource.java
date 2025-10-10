@@ -1,140 +1,89 @@
 package br.edu.ibmec.universidade.resource;
 
+import br.edu.ibmec.universidade.dto.TurmaDTO;
+import br.edu.ibmec.universidade.exception.DaoException;
+import br.edu.ibmec.universidade.exception.ServiceException;
+import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.service.TurmaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
-import service.TurmaService;
-import dto.TurmaDTO;
-import exception.DaoException;
-import exception.ServiceException;
-import exception.ServiceException.ServiceExceptionEnum;
-
-@Path("turma")
-@Consumes("application/xml")
-@Produces("application/xml")
+@RestController
+@RequestMapping(path = "/turma", produces = "application/json")
+@RequiredArgsConstructor
+@Tag(name = "Turmas", description = "Operações de gestão de turmas")
 public class TurmaResource {
 
-	private TurmaService turmaService;
+    private final TurmaService turmaService;
 
-	public TurmaResource() {
-		this.turmaService = new TurmaService();
-	}
+    @GetMapping("/{codigo}/{ano}/{semestre}")
+    @Operation(summary = "Buscar turma por chave composta (código, ano, semestre)")
+    public ResponseEntity<TurmaDTO> buscarTurma(@PathVariable int codigo,
+                                                @PathVariable int ano,
+                                                @PathVariable int semestre) {
+        try {
+            TurmaDTO dto = turmaService.buscarTurma(codigo, ano, semestre);
+            return ResponseEntity.ok(dto);
+        } catch (DaoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	@GET
-	@Path("{codigo}/{ano}/{semestre}")
-	@Produces( { "application/xml", "application/json"})
-	public Response buscarTurma(@PathParam("codigo") String codigo,
-			@PathParam("ano") String ano, @PathParam("semestre") String semestre) {
-		try {
-			TurmaDTO turmaDTO = turmaService.buscarTurma(new Integer(codigo).intValue(),
-					new Integer(ano).intValue(), new Integer(semestre).intValue());
-			Response resposta = Response.ok(turmaDTO).build();
-			return resposta;
-		} catch (DaoException e) {
-			return Response.status(404).build();
-		}
-	}
+    @PostMapping(consumes = "application/json")
+    @Operation(summary = "Cadastrar turma")
+    public ResponseEntity<Void> cadastrarTurma(@RequestBody TurmaDTO turmaDTO) {
+        try {
+            turmaService.cadastrarTurma(turmaDTO);
+            URI location = URI.create("/turma/" + turmaDTO.getCodigo() + "/" + turmaDTO.getAno() + "/" + turmaDTO.getSemestre());
+            return ResponseEntity.created(location).build();
+        } catch (ServiceException e) {
+            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
+            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
+            } else {
+                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
+            }
+        } catch (DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+        }
+    }
 
-	@POST
-	public Response cadastrarTurma(TurmaDTO turmaDTO) throws ServiceException,
-			DaoException {
-		try {
-			turmaService.cadastrarTurma(turmaDTO);
-			return Response.created(
-					new URI("" + turmaDTO.getCodigo() + "/" + turmaDTO.getAno() + "/"
-							+ turmaDTO.getSemestre())).build();
-		} catch (ServiceException e) {
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO)
-				return Response.status(400).header("Motivo", "C�digo inv�lido")
-						.build();
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO)
-				return Response.status(400).header("Motivo", "Nome inv�lido")
-						.build();
-			else
-				return Response.status(400).header("Motivo", e.getMessage())
-						.build();
-		} catch (DaoException e) {
-			return Response.status(400).header("Motivo",
-					"Erro no banco de dados").build();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException();
-		}
-	}
-	
-	@PUT
-	public Response alterarTurma(TurmaDTO turmaDTO) {
-		try {
-			turmaService.cadastrarTurma(turmaDTO);
-			return Response.created(
-					new URI("" + turmaDTO.getCodigo() + "/" + turmaDTO.getAno() + "/"
-							+ turmaDTO.getSemestre())).build();
-		} catch (ServiceException e) {
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO)
-				return Response.status(400).header("Motivo", "C�digo inv�lido")
-						.build();
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO)
-				return Response.status(400).header("Motivo", "Nome inv�lido")
-						.build();
-			else
-				return Response.status(400).header("Motivo", e.getMessage())
-						.build();
-		} catch (DaoException e) {
-			return Response.status(400).header("Motivo",
-					"Erro no banco de dados").build();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException();
-		}
-	}
+    @PutMapping(consumes = "application/json")
+    @Operation(summary = "Alterar turma")
+    public ResponseEntity<Void> alterarTurma(@RequestBody TurmaDTO turmaDTO) {
+        try {
+            turmaService.alterarTurma(turmaDTO); // (corrigido: usar alterar em vez de cadastrar)
+            URI location = URI.create("/turma/" + turmaDTO.getCodigo() + "/" + turmaDTO.getAno() + "/" + turmaDTO.getSemestre());
+            return ResponseEntity.created(location).build();
+        } catch (ServiceException e) {
+            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
+            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
+            } else {
+                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
+            }
+        } catch (DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+        }
+    }
 
-	@DELETE
-	@Path("{codigo}/{ano}/{semestre}")
-	public Response removerTurma(@PathParam("codigo") String codigo,
-			@PathParam("ano") String ano, @PathParam("semestre") String semestre) {
-		try {
-			turmaService.removerTurma(new Integer(codigo).intValue(),
-					new Integer(ano).intValue(), new Integer(semestre).intValue());
-			Response resposta = Response.ok().build();
-			return resposta;
-		} catch (DaoException e) {
-			return Response.status(404).build();
-		}
-	}
-	
-/*	@GET
-	@Path("{codigo}/{ano}/{semestre}")
-	public Response buscarTurma(@PathParam("codigo") String codigo,
-			@PathParam("ano") String ano, @PathParam("semestre") String semestre) {
-		TurmaDTO turma = escolaService.buscarTurma(new Integer(codigo).intValue(),
-				new Integer(ano).intValue(), new Integer(semestre).intValue());
-		if (turma == null) {
-			return Response.status(HttpServletResponse.SC_NOT_FOUND).build();
-		} else {
-			Response resposta = Response.ok(turma).build();
-			return resposta;
-		}
-	}*/
-
-/*	@PUT
-	public Response alterarTurma(TurmaDTO turma) {
-		turma = escolaService.alterarTurma(turma);
-		try {
-			return Response.created(
-					new URI("" + turma.getCodigo() + "/" + turma.getAno() + "/"
-							+ turma.getSemestre())).build();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-
-		// return Response.status(400).build();
-	}*/
+    @DeleteMapping("/{codigo}/{ano}/{semestre}")
+    @Operation(summary = "Remover turma por chave composta")
+    public ResponseEntity<Void> removerTurma(@PathVariable int codigo,
+                                             @PathVariable int ano,
+                                             @PathVariable int semestre) {
+        try {
+            turmaService.removerTurma(codigo, ano, semestre);
+            return ResponseEntity.ok().build();
+        } catch (DaoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

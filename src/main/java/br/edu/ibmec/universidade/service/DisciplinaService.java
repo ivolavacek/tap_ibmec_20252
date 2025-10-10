@@ -10,7 +10,7 @@ import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 
 public class DisciplinaService {
-	private EscolaDAO dao;
+	private final EscolaDAO dao;
 
 	public DisciplinaService() {
 		this.dao = EscolaDAO.getInstance();
@@ -18,10 +18,9 @@ public class DisciplinaService {
 
 	public DisciplinaDTO buscarDisciplina(int codigo) throws DaoException {
 		try {
-			DisciplinaDTO disciplinaDTO = new DisciplinaDTO(dao.getDisciplina(
-					codigo).getCodigo(), dao.getDisciplina(codigo).getNome(),
-					dao.getDisciplina(codigo).getCurso().getCodigo());
-			return disciplinaDTO;
+            return new DisciplinaDTO(dao.getDisciplina(
+                    codigo).getCodigo(), dao.getDisciplina(codigo).getNome(),
+                    dao.getDisciplina(codigo).getCurso().getCodigo());
 		} catch (DaoException e) {
 			throw new DaoException("");
 		}
@@ -37,7 +36,7 @@ public class DisciplinaService {
 			throw new ServiceException(
 					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
 		}
-		if ((disciplinaDTO.getNome().length() < 1)
+		if ((disciplinaDTO.getNome().isEmpty())
 				|| (disciplinaDTO.getNome().length() > 20)) {
 			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
 		}
@@ -58,7 +57,7 @@ public class DisciplinaService {
 			throw new ServiceException(
 					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
 		}
-		if ((disciplinaDTO.getNome().length() < 1)
+		if ((disciplinaDTO.getNome().isEmpty())
 				|| (disciplinaDTO.getNome().length() > 20)) {
 			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
 		}

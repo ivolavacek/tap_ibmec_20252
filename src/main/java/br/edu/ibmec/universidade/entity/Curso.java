@@ -9,8 +9,8 @@ public class Curso {
 	private int codigo;
 	private String nome;
 
-	private List<Aluno> alunos = new ArrayList<Aluno>();
-	private List<Disciplina> disciplinas = new ArrayList<Disciplina>();
+	private List<Aluno> alunos = new ArrayList<>();
+	private List<Disciplina> disciplinas = new ArrayList<>();
 	
 	public Curso() {
 		

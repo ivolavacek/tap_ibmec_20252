@@ -1,124 +1,96 @@
 package br.edu.ibmec.universidade.resource;
 
+import br.edu.ibmec.universidade.dto.AlunoDTO;
+import br.edu.ibmec.universidade.entity.Aluno;
+import br.edu.ibmec.universidade.exception.DaoException;
+import br.edu.ibmec.universidade.exception.ServiceException;
+import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.service.AlunoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
-import service.AlunoService;
-import dto.AlunoDTO;
-import entity.Aluno;
-import exception.DaoException;
-import exception.ServiceException;
-import exception.ServiceException.ServiceExceptionEnum;
-
-@Path("aluno")
-@Consumes("application/xml")
-@Produces("application/xml")
+@RestController
+@RequestMapping(path = "/alunos", produces = "application/json")
+@RequiredArgsConstructor
+@Tag(name = "Alunos", description = "Operações de gestão de alunos")
 public class AlunoResource {
 
-	private AlunoService alunoService;
+    private final AlunoService alunoService; // injetado via construtor (Lombok)
 
-	public AlunoResource() {
-		this.alunoService = new AlunoService();
-	}
+    @GetMapping("/{matricula}")
+    @Operation(summary = "Buscar aluno por matrícula")
+    public ResponseEntity<AlunoDTO> buscarAluno(@PathVariable int matricula) {
+        try {
+            AlunoDTO dto = alunoService.buscarAluno(matricula);
+            return ResponseEntity.ok(dto);
+        } catch (DaoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	@GET
-	// @Produces(MediaType.APPLICATION_JSON + ", " + MediaType.TEXT_PLAIN)
-	// @Produces({"application/json", "text/plain"})
-	// @Produces("application/json")
-	@Produces( { "application/xml", "application/json"})
-	@Path("{matricula}")
-	public Response buscarAluno(@PathParam("matricula") String matricula) {
-		try {
-			AlunoDTO alunoDTO = alunoService.buscarAluno(new Integer(matricula)
-					.intValue());
-			Response resposta = Response.ok(alunoDTO).build();
-			return resposta;
-		} catch (DaoException e) {
-			return Response.status(404).build();
-		}
-	}
+    @PostMapping(consumes = "application/json")
+    @Operation(summary = "Cadastrar aluno")
+    public ResponseEntity<Void> cadastrarAluno(@RequestBody AlunoDTO alunoDTO) {
+        try {
+            alunoService.cadastrarAluno(alunoDTO);
+            return ResponseEntity.created(URI.create("/alunos/" + alunoDTO.getMatricula())).build();
+        } catch (ServiceException e) {
+            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
+            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
+            } else {
+                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
+            }
+        } catch (DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+        }
+    }
 
-	@POST
-	public Response cadastrarAluno(AlunoDTO alunoDTO) throws ServiceException,
-			DaoException {
-		try {
-			alunoService.cadastrarAluno(alunoDTO);
-			return Response.created(new URI("" + alunoDTO.getMatricula())).build();
-		} catch (ServiceException e) {
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO)
-				return Response.status(400).header("Motivo", "C�digo inv�lido")
-						.build();
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO)
-				return Response.status(400).header("Motivo", "Nome inv�lido")
-						.build();
-			else
-				return Response.status(400).header("Motivo", e.getMessage())
-						.build();
-		} catch (DaoException e) {
-			return Response.status(400).header("Motivo",
-					"Erro no banco de dados").build();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException();
-		}
-	}
+    @PutMapping(consumes = "application/json")
+    @Operation(summary = "Alterar aluno")
+    public ResponseEntity<Void> alterarAluno(@RequestBody AlunoDTO alunoDTO) {
+        try {
+            alunoService.alterarAluno(alunoDTO);
+            return ResponseEntity.created(URI.create("/alunos/" + alunoDTO.getMatricula())).build();
+        } catch (ServiceException e) {
+            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
+            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
+                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
+            } else {
+                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
+            }
+        } catch (DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+        }
+    }
 
-	@PUT
-	public Response alterarAluno(AlunoDTO alunoDTO) {
-		try {
-			alunoService.alterarAluno(alunoDTO);
-			return Response.created(new URI("" + alunoDTO.getMatricula())).build();
-		} catch (ServiceException e) {
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO)
-				return Response.status(400).header("Motivo", "C�digo inv�lido")
-						.build();
-			if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO)
-				return Response.status(400).header("Motivo", "Nome inv�lido")
-						.build();
-			else
-				return Response.status(400).header("Motivo", e.getMessage())
-						.build();
-		} catch (DaoException e) {
-			return Response.status(400).header("Motivo",
-					"Erro no banco de dados").build();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException();
-		}
-	}
+    @DeleteMapping("/{matricula}")
+    @Operation(summary = "Remover aluno")
+    public ResponseEntity<Void> removerAluno(@PathVariable int matricula) {
+        try {
+            alunoService.removerAluno(matricula);
+            return ResponseEntity.ok().build();
+        } catch (DaoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-	@DELETE
-	@Path("{matricula}")
-	public Response removerAluno(@PathParam("matricula") String matricula) {
-		try {
-			alunoService.removerAluno(new Integer(matricula)
-					.intValue());
-			Response resposta = Response.ok().build();
-			return resposta;
-		} catch (DaoException e) {
-			return Response.status(404).build();
-		}
-	}
-	
-	@GET
-	@Produces("text/plain")
-	public String listarAlunos() {
-		List<String> nomes = new ArrayList<String>();
-		for(Iterator<Aluno> it = alunoService.listarAlunos().iterator(); it.hasNext();)
-		{
-			Aluno aluno = (Aluno)it.next();
-			nomes.add(aluno.getNome());
-		} return nomes.toString();
-	}
+    @GetMapping(produces = "text/plain")
+    @Operation(summary = "Listar nomes (texto simples)")
+    public ResponseEntity<String> listarAlunos() {
+        List<String> nomes = alunoService.listarAlunos()
+                .stream()
+                .map(Aluno::getNome)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(nomes.toString());
+    }
 }

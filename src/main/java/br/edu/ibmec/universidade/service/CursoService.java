@@ -10,18 +10,17 @@ import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 
 public class CursoService {
-	private EscolaDAO dao;
+	private final EscolaDAO dao;
 
 	public CursoService() {
 		this.dao = EscolaDAO.getInstance();
 	}
 
 	public CursoDTO buscarCurso(int codigo) throws DaoException {
-		try{
-			CursoDTO cursoDTO = new CursoDTO(dao.getCurso(codigo).getCodigo(), dao
-					.getCurso(codigo).getNome());
-			return cursoDTO;
-		}
+        try{
+            return new CursoDTO(dao.getCurso(codigo).getCodigo(), dao
+                    .getCurso(codigo).getNome());
+        }
 		catch(DaoException e)
 		{
 			throw new DaoException("");
@@ -38,7 +37,7 @@ public class CursoService {
 			throw new ServiceException(
 					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
 		}
-		if ((cursoDTO.getNome().length() < 1)
+		if ((cursoDTO.getNome().isEmpty())
 				|| (cursoDTO.getNome().length() > 20)) {
 			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
 		}
@@ -58,7 +57,7 @@ public class CursoService {
 			throw new ServiceException(
 					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
 		}
-		if ((cursoDTO.getNome().length() < 1)
+		if ((cursoDTO.getNome().isEmpty())
 				|| (cursoDTO.getNome().length() > 20)) {
 			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
 		}
