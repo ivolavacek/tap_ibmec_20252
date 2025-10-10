@@ -70,14 +70,14 @@ public class DisciplinaResource {
         }
     }
 
-    @DeleteMapping("/{codigo}")
-    @Operation(summary = "Remover disciplina")
-    public ResponseEntity<Void> removerDisciplina(@PathVariable int codigo) {
-        try {
-            disciplinaService.removerDisciplina(codigo);
-            return ResponseEntity.ok().build();
-        } catch (DaoException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @DeleteMapping("/{codigo}")
+//    @Operation(summary = "Remover disciplina")
+//    public ResponseEntity<Void> removerDisciplina(@PathVariable int codigo) {
+//        try {
+//            disciplinaService.removerDisciplina(codigo);
+//            return ResponseEntity.ok().build();
+//        } catch (DaoException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 }

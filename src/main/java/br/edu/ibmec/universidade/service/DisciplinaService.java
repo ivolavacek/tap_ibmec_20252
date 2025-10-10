@@ -8,7 +8,9 @@ import br.edu.ibmec.universidade.entity.Disciplina;
 import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
+import org.springframework.stereotype.Service;
 
+@Service
 public class DisciplinaService {
 	private final EscolaDAO dao;
 
@@ -72,12 +74,12 @@ public class DisciplinaService {
 		}
 	}
 
-	public void removerDisciplina(int codigo) throws DaoException {
-		try {
-			dao.removeDisciplina(codigo);
-		} catch (DaoException e) {
-			throw new DaoException("");
-		}
-	}
+//	public void removerDisciplina(int codigo) throws DaoException {
+//		try {
+//			dao.removeDisciplina(codigo);
+//		} catch (DaoException e) {
+//			throw new DaoException("");
+//		}
+//	}
 
 }

@@ -3,22 +3,18 @@
 *
 * @author  Thiago Silva de Souza
 * @version 1.0
-* @since   2012-02-29 
+* @since   2012-02-29
 */
 
 package br.edu.ibmec.universidade.dao;
 
 import java.util.*;
 
-import org.apache.commons.collections4.map.MultiKeyMap;
-
 import br.edu.ibmec.universidade.entity.Aluno;
 import br.edu.ibmec.universidade.entity.Curso;
 import br.edu.ibmec.universidade.entity.DataNascimento;
 import br.edu.ibmec.universidade.entity.Disciplina;
 import br.edu.ibmec.universidade.entity.EstadoCivil;
-import br.edu.ibmec.universidade.entity.Inscricao;
-import br.edu.ibmec.universidade.entity.Turma;
 import br.edu.ibmec.universidade.exception.DaoException;
 
 public class EscolaDAO {
@@ -26,8 +22,6 @@ public class EscolaDAO {
 	private Map<Integer, Aluno> alunos;
 	private Map<Integer, Curso> cursos;
 	private Map<Integer, Disciplina> disciplinas;
-	private MultiKeyMap<Integer, Turma> turmas;
-	private MultiKeyMap<Integer, Inscricao> inscricoes;
 
 	private static EscolaDAO instance;
 
@@ -35,8 +29,6 @@ public class EscolaDAO {
 		alunos = new HashMap<Integer, Aluno>();
 		cursos = new HashMap<Integer, Curso>();
 		disciplinas = new HashMap<Integer, Disciplina>();
-		turmas = new MultiKeyMap();
-		inscricoes = new MultiKeyMap();
 
 		Curso curso = new Curso(99, "Computacao");
 		try {
@@ -68,34 +60,6 @@ public class EscolaDAO {
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}
-
-		Turma turma = new Turma(123, 2010, 1, disciplina);
-		Turma turma2 = new Turma(321, 2010, 1, disciplina);
-
-		try {
-			this.addTurma(turma);
-		} catch (DaoException e) {
-			e.printStackTrace();
-		}
-		// System.out.println(turmas.get(123, 2010, 1));
-
-		turmas.put(turma2.getCodigo(), turma2.getAno(), turma2.getSemestre(),
-				turma2); // ao incluir deve-se colocar as chaves e por ultimo o
-		// valor
-		System.out.println(turmas.get(321, 2010, 1)); // ao buscar deve-se
-		// passar todas as chaves
-
-		try {
-			System.out.println(this.getTurmas());
-		} catch (DaoException e) {
-			e.printStackTrace();
-		}
-
-		Inscricao inscricao = new Inscricao(6.0f, 8.0f, 10, "aprovado", aluno,
-				turma2);
-		inscricoes.put(aluno.getMatricula(), turma2.getCodigo(), turma2
-				.getAno(), turma2.getSemestre(), inscricao);
-		System.out.println(inscricoes);
 
 	}
 
@@ -205,92 +169,6 @@ public class EscolaDAO {
 	// ok
 	public Collection<Disciplina> getDisciplinas() {
 		return disciplinas.values();
-	}
-
-	// ok
-	public void removeDisciplina(int codDisciplina) throws DaoException {
-		if (disciplinas.get(codDisciplina) == null) {
-			throw new DaoException("");
-		}
-		disciplinas.remove(codDisciplina);
-	}
-
-	// ok
-	public void addTurma(Turma t) throws DaoException {
-		turmas.put(t.getCodigo(), t.getAno(), t.getSemestre(), t);
-	}
-
-	// ok
-	public Turma updateTurma(Turma turmaNova) throws DaoException {
-		turmas.put(turmaNova.getCodigo(), turmaNova.getAno(), turmaNova
-				.getSemestre(), turmaNova);
-		return turmaNova;
-	}
-
-	// ok
-	public Turma getTurma(int codTurma, int ano, int semestre)
-			throws DaoException {
-		if (turmas.get(codTurma, ano, semestre) == null) {
-			throw new DaoException("");
-		}
-		return (Turma) turmas.get(codTurma, ano, semestre);
-	}
-
-	public Collection<Turma> getTurmas() throws DaoException {
-		return turmas.values();
-	}
-
-	// ok
-	public void removeTurma(int codTurma, int ano, int semestre)
-			throws DaoException {
-		if (turmas.get(codTurma, ano, semestre) == null) {
-			throw new DaoException("");
-		}
-		turmas.removeMultiKey(codTurma, ano, semestre);
-	}
-
-	// ok
-	public void addInscricao(Inscricao i) throws DaoException {
-		inscricoes.put(i.getTurma().getCodigo(), i.getTurma().getAno(), i
-				.getTurma().getSemestre(), i.getAluno().getMatricula(), i);
-	}
-
-	// ok
-	public Inscricao updateInscricao(Inscricao inscricaoNova)
-			throws DaoException {
-		inscricoes.put(inscricaoNova.getTurma().getCodigo(), inscricaoNova
-				.getTurma().getAno(), inscricaoNova.getTurma().getSemestre(),
-				inscricaoNova.getAluno().getMatricula(), inscricaoNova);
-		return inscricaoNova;
-	}
-
-	// ok
-	public Inscricao getInscricao(int matricula, int codigo, int ano,
-			int semestre) throws DaoException {
-		System.out.println("campos:" + matricula + "-" + codigo + "-" + ano
-				+ "-" + semestre);
-		// if (inscricoes.get(getAluno(matricula).getMatricula(),
-		// getTurma(codigo, ano, semestre)) == null) {
-		Inscricao inscricao = (Inscricao) inscricoes.get(matricula, codigo,
-				ano, semestre);
-		if (inscricao == null) {
-			System.out.println("null");
-			throw new DaoException("");
-		}
-		return inscricao;
-	}
-
-	public Collection<Inscricao> getInscricoes() throws DaoException {
-		return inscricoes.values();
-	}
-
-	// ok
-	public void removeInscricao(int matricula, int codigo, int ano, int semestre)
-			throws DaoException {
-		if (inscricoes.get(matricula, codigo, ano, semestre) == null) {
-			throw new DaoException("");
-		}
-		inscricoes.removeMultiKey(matricula, codigo, ano, semestre);
 	}
 
 }
