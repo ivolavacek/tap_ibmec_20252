@@ -50,7 +50,8 @@ public class AlunoResource {
                 return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
             }
         } catch (DaoException e) {
-            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+            e.printStackTrace();  // imprimir no log para ver o erro
+            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados: " + e.getMessage()).build();
         }
     }
 

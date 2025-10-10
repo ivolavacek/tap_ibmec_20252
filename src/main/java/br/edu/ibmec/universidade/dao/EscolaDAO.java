@@ -39,7 +39,7 @@ public class EscolaDAO {
 
 		Disciplina disciplina = new Disciplina(123, "UML 2", curso);
 
-		Vector<String> telefones = new Vector<String>();
+		List<String> telefones = new ArrayList<String>();
 		telefones.add("2177776666");
 		telefones.add("3177776669");
 		telefones.add("6177778889");
