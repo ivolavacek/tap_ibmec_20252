@@ -10,7 +10,7 @@ public class Disciplina {
 	private String nome;
 	private Curso curso;
 
-	private List<Turma> turmas = new ArrayList<Turma>();
+	private List<Turma> turmas = new ArrayList<>();
 	//private List<AlunoMonitor> monitores = new ArrayList<AlunoMonitor>();
 
 	public Disciplina() {

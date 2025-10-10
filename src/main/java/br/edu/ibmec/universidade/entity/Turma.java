@@ -11,7 +11,7 @@ public class Turma {
 	private int semestre;
 
 	private Disciplina disciplina;
-	private List<Inscricao> inscricoes = new ArrayList<Inscricao>();
+	private List<Inscricao> inscricoes = new ArrayList<>();
 
 	public Turma() {
 		

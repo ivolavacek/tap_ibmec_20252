@@ -1,38 +1,45 @@
 package br.edu.ibmec.universidade.dto;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
-@XmlRootElement(name = "aluno")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AlunoDTO {
-	private int matricula;
-	private String nome;
-	private String dtNascimento;
-	private int idade;
-	private boolean matriculaAtiva;
-	private EstadoCivilDTO estadoCivilDTO;
-	private List<String> telefones;
-	private int curso;
 
-	// If you need custom logic for idade calculation, keep this method:
-	public static int getIdadeConvertida(String data) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date dataConvertida = null;
-		try {
-			dataConvertida = sdf.parse(data);
-			Date hoje = new Date();
-			return hoje.getYear() - dataConvertida.getYear();
-		} catch (Exception e) {
-			return 0;
-		}
-	}
+    private int matricula;
+    private String nome;
+
+    // Mantemos como String porque o service já formata "dd/MM/yyyy"
+    // (se preferir LocalDate, eu ajusto o service.)
+    private String dtNascimento; // formato: dd/MM/yyyy
+
+    private int idade;
+    private boolean matriculaAtiva;
+    private EstadoCivilDTO estadoCivilDTO;
+    private List<String> telefones;
+    private int curso;
+
+    // Cálculo de idade correto usando java.time
+    public static int getIdadeConvertida(String data) {
+        if (data == null || data.isBlank()) return 0;
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate nascimento = LocalDate.parse(data, fmt);
+            return Period.between(nascimento, LocalDate.now()).getYears();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }
