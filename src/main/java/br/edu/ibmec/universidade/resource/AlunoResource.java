@@ -85,13 +85,13 @@ public class AlunoResource {
         }
     }
 
-    @GetMapping(produces = "text/plain")
-    @Operation(summary = "Listar nomes (texto simples)")
-    public ResponseEntity<String> listarAlunos() {
+    @GetMapping(produces = "application/json")
+    @Operation(summary = "Listar nomes")
+    public ResponseEntity<List<String>> listarAlunos() {
         List<String> nomes = alunoService.listarAlunos()
                 .stream()
                 .map(Aluno::getNome)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(nomes.toString());
+        return ResponseEntity.ok(nomes);
     }
 }

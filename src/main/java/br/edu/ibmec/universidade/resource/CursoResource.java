@@ -49,8 +49,6 @@ public class CursoResource {
             } else {
                 return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
             }
-        } catch (DaoException e) {
-            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
         }
     }
 
@@ -84,13 +82,13 @@ public class CursoResource {
         }
     }
 
-    @GetMapping(produces = "text/plain")
-    @Operation(summary = "Listar nomes dos cursos (texto simples)")
-    public ResponseEntity<String> listarCursos() {
+    @GetMapping(produces = "application/json")
+    @Operation(summary = "Listar nomes dos cursos")
+    public ResponseEntity<List<String>> listarCursos() {
         List<String> nomes = cursoService.listarCursos()
                 .stream()
                 .map(Curso::getNome)
                 .toList();
-        return ResponseEntity.ok(nomes.toString());
+        return ResponseEntity.ok(nomes);
     }
 }

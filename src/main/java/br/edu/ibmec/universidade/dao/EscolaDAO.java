@@ -13,7 +13,6 @@ import java.util.*;
 import br.edu.ibmec.universidade.entity.Aluno;
 import br.edu.ibmec.universidade.entity.Curso;
 import br.edu.ibmec.universidade.entity.DataNascimento;
-import br.edu.ibmec.universidade.entity.Disciplina;
 import br.edu.ibmec.universidade.entity.EstadoCivil;
 import br.edu.ibmec.universidade.exception.DaoException;
 
@@ -21,14 +20,12 @@ public class EscolaDAO {
 
 	private Map<Integer, Aluno> alunos;
 	private Map<Integer, Curso> cursos;
-	private Map<Integer, Disciplina> disciplinas;
 
 	private static EscolaDAO instance;
 
 	public EscolaDAO() {
 		alunos = new HashMap<Integer, Aluno>();
 		cursos = new HashMap<Integer, Curso>();
-		disciplinas = new HashMap<Integer, Disciplina>();
 
 		Curso curso = new Curso(99, "Computacao");
 		try {
@@ -37,18 +34,10 @@ public class EscolaDAO {
 			e.printStackTrace();
 		}
 
-		Disciplina disciplina = new Disciplina(123, "UML 2", curso);
-
 		List<String> telefones = new ArrayList<String>();
 		telefones.add("2177776666");
 		telefones.add("3177776669");
 		telefones.add("6177778889");
-
-		try {
-			this.addDisciplina(disciplina);
-		} catch (DaoException e) {
-			e.printStackTrace();
-		}
 
 		DataNascimento data = new DataNascimento(10, 10, 1990);
 		Aluno aluno = new Aluno(11, "Joao da Silva", data, true,
@@ -144,31 +133,4 @@ public class EscolaDAO {
 			throw new DaoException("");
 		}
 	}
-
-	// ok
-	public void addDisciplina(Disciplina d) throws DaoException {
-		disciplinas.put(d.getCodigo(), d);
-		getDisciplina(d.getCodigo());
-	}
-
-	// ok
-	public Disciplina updateDisciplina(Disciplina disciplinaNova)
-			throws DaoException {
-		disciplinas.put(disciplinaNova.getCodigo(), disciplinaNova);
-		return disciplinaNova;
-	}
-
-	// ok
-	public Disciplina getDisciplina(int codDisciplina) throws DaoException {
-		if (disciplinas.get(codDisciplina) == null) {
-			throw new DaoException("");
-		}
-		return disciplinas.get(codDisciplina);
-	}
-
-	// ok
-	public Collection<Disciplina> getDisciplinas() {
-		return disciplinas.values();
-	}
-
 }
