@@ -1,8 +1,7 @@
 package br.edu.ibmec.universidade.entity;
 
-import lombok.Data;
+import jakarta.persistence.Entity;
 
-@Data
 public enum EstadoCivil {
 	solteiro, casado, divorciado, viuvo;
 }

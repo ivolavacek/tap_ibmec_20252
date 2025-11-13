@@ -1,33 +1,41 @@
 package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Vector;
+
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString(exclude = "curso")
+@Entity
+
 public class Aluno {
+    @Id
 	private int matricula;
+
 	private String nome;
-	private Date dataNascimento;
+    @Embedded
+	private DataNascimento dataNascimento;
 	private int idade;
 	private boolean matriculaAtiva;
+    @Enumerated(EnumType.STRING)
 	private EstadoCivil estadoCivil;
-	private Vector<String> telefones;
+	private List<String> telefones;
 
-	
+	@ManyToOne
 	private Curso curso;
 	
-	private List<Inscricao> inscricoes = new ArrayList<Inscricao>();
+//	private List<Inscricao> inscricoes = new ArrayList<>();
 
 	public Aluno() {
 
 	}
 
-	public Aluno(int matricula, String nome, Date dataNascimento,
+	public Aluno(int matricula, String nome, DataNascimento dataNascimento,
 			boolean matriculaAtiva, EstadoCivil estadoCivil, Curso curso, 
-			Vector<String> telefones) {
+			List<String> telefones) {
 		this.matricula = matricula;
 		this.nome = nome;
 		this.dataNascimento = dataNascimento;
@@ -39,12 +47,12 @@ public class Aluno {
 		this.telefones = telefones;
 	}
 
-	public void addInscricao(Inscricao inscricao) {
-		inscricoes.add(inscricao);
-	}
+//	public void addInscricao(Inscricao inscricao) {
+//		inscricoes.add(inscricao);
+//	}
 
-	public void removeInscricao(Inscricao inscricao) {
-		inscricoes.remove(inscricao);
-	}
-
+//	public void removeInscricao(Inscricao inscricao) {
+//		inscricoes.remove(inscricao);
+//	}
+//
 }

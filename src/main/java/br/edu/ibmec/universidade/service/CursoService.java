@@ -1,84 +1,60 @@
 package br.edu.ibmec.universidade.service;
 
-import java.util.Collection;
-
-import br.edu.ibmec.universidade.dao.EscolaDAO;
 import br.edu.ibmec.universidade.dto.CursoDTO;
 import br.edu.ibmec.universidade.entity.Curso;
 import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.repository.CursoRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
+
+@Service
 public class CursoService {
-	private EscolaDAO dao;
 
-	public CursoService() {
-		this.dao = EscolaDAO.getInstance();
-	}
+    @Autowired
+    private CursoRepository cursoRepository;
 
-	public CursoDTO buscarCurso(int codigo) throws DaoException {
-		try{
-			CursoDTO cursoDTO = new CursoDTO(dao.getCurso(codigo).getCodigo(), dao
-					.getCurso(codigo).getNome());
-			return cursoDTO;
-		}
-		catch(DaoException e)
-		{
-			throw new DaoException("");
-		}
-	}
+    public CursoDTO buscarCurso(int codigo) throws DaoException {
+        Curso curso = cursoRepository.findById(codigo)
+                .orElseThrow(() -> new DaoException("Curso não encontrado"));
+        return new CursoDTO(curso.getCodigo(), curso.getNome());
+    }
 
-	public Collection<Curso> listarCursos() {
-		return dao.getCursos();
-	}
+    public Collection<Curso> listarCursos() {
+        return cursoRepository.findAll();
+    }
 
-	public void cadastrarCurso(CursoDTO cursoDTO) throws ServiceException,
-			DaoException {
-		if ((cursoDTO.getCodigo() < 1) || (cursoDTO.getCodigo() > 99)) {
-			throw new ServiceException(
-					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
-		}
-		if ((cursoDTO.getNome().length() < 1)
-				|| (cursoDTO.getNome().length() > 20)) {
-			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
-		}
+    public void cadastrarCurso(CursoDTO cursoDTO) throws ServiceException {
+        validar(cursoDTO);
+        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
+        cursoRepository.save(curso);
+    }
 
-		Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
+    public void alterarCurso(CursoDTO cursoDTO) throws ServiceException, DaoException {
+        validar(cursoDTO);
+        if (!cursoRepository.existsById(cursoDTO.getCodigo())) {
+            throw new DaoException("Curso não encontrado");
+        }
+        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
+        cursoRepository.save(curso);
+    }
 
-		try {
-			dao.addCurso(curso);
-		} catch (DaoException e) {
-			throw new DaoException("erro do dao no service throw");
-		}
-	}
+    public void removerCurso(int codigo) throws DaoException {
+        if (!cursoRepository.existsById(codigo)) {
+            throw new DaoException("Curso não encontrado");
+        }
+        cursoRepository.deleteById(codigo);
+    }
 
-	public void alterarCurso(CursoDTO cursoDTO) throws ServiceException,
-			DaoException {
-		if ((cursoDTO.getCodigo() < 1) || (cursoDTO.getCodigo() > 99)) {
-			throw new ServiceException(
-					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
-		}
-		if ((cursoDTO.getNome().length() < 1)
-				|| (cursoDTO.getNome().length() > 20)) {
-			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
-		}
-
-		Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
-
-		try {
-			dao.updateCurso(curso);
-		} catch (DaoException e) {
-			throw new DaoException("erro do dao no service throw");
-		}
-	}
-
-	public void removerCurso(int codigo) throws DaoException {
-		try {
-			dao.removeCurso(codigo);
-		}
-		catch(DaoException e)
-		{
-			throw new DaoException("");
-		}
-	}
+    private void validar(CursoDTO dto) throws ServiceException {
+        if (dto.getCodigo() < 1 || dto.getCodigo() > 99) {
+            throw new ServiceException(ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
+        }
+        if (dto.getNome() == null || dto.getNome().isBlank() || dto.getNome().length() > 20) {
+            throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
+        }
+    }
 }

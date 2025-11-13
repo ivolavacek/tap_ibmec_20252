@@ -1,117 +1,126 @@
 package br.edu.ibmec.universidade.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-
-import br.edu.ibmec.universidade.dao.*
-;
-import br.edu.ibmec.universidade.dao.EscolaDAO;
 import br.edu.ibmec.universidade.dto.AlunoDTO;
-import br.edu.ibmec.universidade.entity.Aluno;
-import br.edu.ibmec.universidade.entity.Curso;
-import br.edu.ibmec.universidade.entity.Data;
-import br.edu.ibmec.universidade.entity.EstadoCivil;
+import br.edu.ibmec.universidade.entity.*;
 import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
+import br.edu.ibmec.universidade.repository.AlunoRepository;
+import br.edu.ibmec.universidade.repository.CursoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+@Service
 public class AlunoService {
-	private EscolaDAO dao;
 
-	public AlunoService() {
-		this.dao = EscolaDAO.getInstance();
-	}
-	
-	public static final Data getData(String data)
-	{
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date dataConvertida = null;
-		try {
-			dataConvertida = sdf.parse(data);
-			Data dataRetorno = new Data();
-			dataRetorno.setAno(dataConvertida.getYear());
-			dataRetorno.setMes(dataConvertida.getMonth());
-			dataRetorno.setDia(dataConvertida.getDay());
-			return dataRetorno;
-		} catch (Exception e) {
-			System.out.println("Erro Convers�o da data: " + e.getMessage());
-			return null;
-		}
-	}
+    @Autowired
+    private AlunoRepository alunoRepository;
 
-	public AlunoDTO buscarAluno(int matricula) throws DaoException {
-		try {
-			AlunoDTO alunoDTO = new AlunoDTO(dao.getAluno(matricula)
-					.getMatricula(), dao.getAluno(matricula).getNome(), 
-					dao.getAluno(matricula).getDataNascimento().toString(), 
-					dao.getAluno(matricula).isMatriculaAtiva(), 
-					null, 
-					dao.getAluno(matricula).getCurso().getCodigo(),
-					dao.getAluno(matricula).getTelefones());
-			return alunoDTO;
-		} catch (DaoException e) {
-			throw new DaoException("");
-		}
-	}
+    @Autowired
+    private CursoRepository cursoRepository;
 
-	public Collection<Aluno> listarAlunos() {
-		return dao.getAlunos();
-	}
+    public AlunoDTO buscarAluno(int matricula) throws DaoException {
+        Aluno aluno = alunoRepository.findById(matricula)
+                .orElseThrow(() -> new DaoException("Aluno não encontrado"));
+        return toDTO(aluno);
+    }
 
-	public void cadastrarAluno(AlunoDTO alunoDTO) throws ServiceException,
-			DaoException {
-		if ((alunoDTO.getMatricula() < 1) || (alunoDTO.getMatricula() > 99)) {
-			throw new ServiceException(
-					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
-		}
-		if ((alunoDTO.getNome().length() < 1)
-				|| (alunoDTO.getNome().length() > 20)) {
-			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
-		}
-				
-		Aluno aluno = new Aluno(alunoDTO.getMatricula(), alunoDTO.getNome(),
-				getData(alunoDTO.getDtNascimento().toString()), alunoDTO.isMatriculaAtiva(),
-				EstadoCivil.solteiro, dao.getCurso(alunoDTO.getCurso()),
-				alunoDTO.getTelefones());
+    public Collection<Aluno> listarAlunos() {
+        return alunoRepository.findAll();
+    }
 
-		try {
-			dao.addAluno(aluno);
-			Curso curso = dao.getCurso(alunoDTO.getCurso());
-			curso.getAlunos().add(aluno);
-		} catch (DaoException e) {
-			throw new DaoException("erro do dao no service throw");
-		}
-	}
+    public void cadastrarAluno(AlunoDTO alunoDTO) throws ServiceException, DaoException {
+        validarAlunoDTO(alunoDTO);
 
-	public void alterarAluno(AlunoDTO alunoDTO) throws ServiceException,
-			DaoException {
-		if ((alunoDTO.getMatricula() < 1) || (alunoDTO.getMatricula() > 99)) {
-			throw new ServiceException(
-					ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
-		}
-		if ((alunoDTO.getNome().length() < 1)
-				|| (alunoDTO.getNome().length() > 20)) {
-			throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
-		}
+        Curso curso = cursoRepository.findById(alunoDTO.getCurso())
+                .orElseThrow(() -> new DaoException("Curso não encontrado"));
 
-		Aluno aluno = new Aluno(alunoDTO.getMatricula(), alunoDTO.getNome(),
-				getData(alunoDTO.getDtNascimento()), alunoDTO.isMatriculaAtiva(),
-				EstadoCivil.solteiro, dao.getCurso(alunoDTO.getCurso()),
-				alunoDTO.getTelefones());
+        Aluno aluno = new Aluno(
+                alunoDTO.getMatricula(),
+                alunoDTO.getNome(),
+                getData(alunoDTO.getDtNascimento()),
+                alunoDTO.isMatriculaAtiva(),
+                EstadoCivil.solteiro, // ou parsear do DTO
+                curso,
+                alunoDTO.getTelefones()
+        );
 
-		try {
-			dao.updateAluno(aluno);
-		} catch (DaoException e) {
-			throw new DaoException("erro do dao no service throw");
-		}
-	}
+        alunoRepository.save(aluno);
+    }
 
-	public void removerAluno(int matricula) throws DaoException {
-		try {
-			dao.removeAluno(matricula);
-		} catch (DaoException e) {
-			throw new DaoException("");
-		}
-	}
+    public void alterarAluno(AlunoDTO alunoDTO) throws ServiceException, DaoException {
+        validarAlunoDTO(alunoDTO);
+
+        Curso curso = cursoRepository.findById(alunoDTO.getCurso())
+                .orElseThrow(() -> new DaoException("Curso não encontrado"));
+
+        Aluno aluno = new Aluno(
+                alunoDTO.getMatricula(),
+                alunoDTO.getNome(),
+                getData(alunoDTO.getDtNascimento()),
+                alunoDTO.isMatriculaAtiva(),
+                EstadoCivil.solteiro,
+                curso,
+                alunoDTO.getTelefones()
+        );
+
+        alunoRepository.save(aluno);
+    }
+
+    public void removerAluno(int matricula) throws DaoException {
+        if (!alunoRepository.existsById(matricula)) {
+            throw new DaoException("Aluno não encontrado");
+        }
+        alunoRepository.deleteById(matricula);
+    }
+
+    // --------- Helpers ---------
+
+    private void validarAlunoDTO(AlunoDTO dto) throws ServiceException {
+        if (dto.getMatricula() < 1 || dto.getMatricula() > 99) {
+            throw new ServiceException(ServiceExceptionEnum.CURSO_CODIGO_INVALIDO);
+        }
+        if (dto.getNome() == null || dto.getNome().isEmpty() || dto.getNome().length() > 20) {
+            throw new ServiceException(ServiceExceptionEnum.CURSO_NOME_INVALIDO);
+        }
+    }
+
+    private AlunoDTO toDTO(Aluno a) {
+        AlunoDTO dto = new AlunoDTO();
+        dto.setMatricula(a.getMatricula());
+        dto.setNome(a.getNome());
+        String dataFormatada = formatarData(a.getDataNascimento());
+        dto.setDtNascimento(dataFormatada);
+        dto.setIdade(AlunoDTO.getIdadeConvertida(dataFormatada));
+        dto.setMatriculaAtiva(a.isMatriculaAtiva());
+        dto.setEstadoCivilDTO(null); // conversão futura
+        dto.setTelefones(a.getTelefones());
+        dto.setCurso(a.getCurso() != null ? a.getCurso().getCodigo() : 0);
+        return dto;
+    }
+
+    private String formatarData(DataNascimento dn) {
+        if (dn == null) return null;
+        return String.format("%02d/%02d/%04d", dn.getDia(), dn.getMes(), dn.getAno());
+    }
+
+    public static DataNascimento getData(String data) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date d = sdf.parse(data);
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(d);
+            return new DataNascimento(
+                    cal.get(java.util.Calendar.DAY_OF_MONTH),
+                    cal.get(java.util.Calendar.MONTH) + 1,
+                    cal.get(java.util.Calendar.YEAR)
+            );
+        } catch (Exception e) {
+            System.out.println("Erro conversão da data: " + e.getMessage());
+            return null;
+        }
+    }
 }
