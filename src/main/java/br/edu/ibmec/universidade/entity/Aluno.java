@@ -22,12 +22,15 @@ public class Aluno {
 	private boolean matriculaAtiva;
     @Enumerated(EnumType.STRING)
 	private EstadoCivil estadoCivil;
-	private List<String> telefones;
+
+	@ElementCollection
+	private List<String> telefones = new ArrayList<>();
 
 	@ManyToOne
 	private Curso curso;
 	
-//	private List<Inscricao> inscricoes = new ArrayList<>();
+	@OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Inscricao> inscricoes = new ArrayList<>();
 
 	public Aluno() {
 
@@ -47,12 +50,13 @@ public class Aluno {
 		this.telefones = telefones;
 	}
 
-//	public void addInscricao(Inscricao inscricao) {
-//		inscricoes.add(inscricao);
-//	}
+	public void addInscricao(Inscricao inscricao) {
+		inscricoes.add(inscricao);
+		inscricao.setAluno(this);
+	}
 
-//	public void removeInscricao(Inscricao inscricao) {
-//		inscricoes.remove(inscricao);
-//	}
-//
+	public void removeInscricao(Inscricao inscricao) {
+		inscricoes.remove(inscricao);
+		inscricao.setAluno(null);
+	}
 }
