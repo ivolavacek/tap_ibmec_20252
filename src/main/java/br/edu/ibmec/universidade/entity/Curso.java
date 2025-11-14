@@ -19,7 +19,9 @@ public class Curso {
 
 	private String nome;
 
-	// ---- Relacionamento com DISCIPLINA (1:N) ----
+    private double valorPorDisciplina;
+
+    // ---- Relacionamento com DISCIPLINA (1:N) ----
 	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference(value = "curso-disciplina")
 	private List<Disciplina> disciplinas = new ArrayList<>();
@@ -29,13 +31,14 @@ public class Curso {
 	@JsonManagedReference(value = "curso-aluno")
 	private List<Aluno> alunos = new ArrayList<>();
 
-	public Curso() {
-	}
+    public Curso() {
+    }
 
-	public Curso(int codigo, String nome) {
-		this.codigo = codigo;
-		this.nome = nome;
-	}
+    public Curso(int codigo, String nome, double valorPorDisciplina) {
+        this.codigo = codigo;
+        this.nome = nome;
+        this.valorPorDisciplina = valorPorDisciplina;
+    }
 
 	// ----- Métodos auxiliares -----
 

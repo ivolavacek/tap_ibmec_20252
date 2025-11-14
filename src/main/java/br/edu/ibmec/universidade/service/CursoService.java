@@ -20,7 +20,7 @@ public class CursoService {
     public CursoDTO buscarCurso(int codigo) throws DaoException {
         Curso curso = cursoRepository.findById(codigo)
                 .orElseThrow(() -> new DaoException("Curso não encontrado"));
-        return new CursoDTO(curso.getCodigo(), curso.getNome());
+        return new CursoDTO(curso.getCodigo(), curso.getNome(), curso.getValorPorDisciplina());
     }
 
     public Collection<Curso> listarCursos() {
@@ -29,7 +29,7 @@ public class CursoService {
 
     public void cadastrarCurso(CursoDTO cursoDTO) throws ServiceException {
         validar(cursoDTO);
-        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
+        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome(),cursoDTO.getValorPorDisciplina());
         cursoRepository.save(curso);
     }
 
@@ -38,7 +38,7 @@ public class CursoService {
         if (!cursoRepository.existsById(cursoDTO.getCodigo())) {
             throw new DaoException("Curso não encontrado");
         }
-        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome());
+        Curso curso = new Curso(cursoDTO.getCodigo(), cursoDTO.getNome(), cursoDTO.getValorPorDisciplina());
         cursoRepository.save(curso);
     }
 

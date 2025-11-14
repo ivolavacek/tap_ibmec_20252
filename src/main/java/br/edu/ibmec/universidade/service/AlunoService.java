@@ -7,6 +7,7 @@ import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 import br.edu.ibmec.universidade.repository.AlunoRepository;
 import br.edu.ibmec.universidade.repository.CursoRepository;
+import br.edu.ibmec.universidade.service.strategy.MensalidadeStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,16 @@ import java.util.*;
 @Service
 public class AlunoService {
 
+    private final AlunoRepository alunoRepository;
+
     @Autowired
-    private AlunoRepository alunoRepository;
+    public AlunoService(AlunoRepository alunoRepository) {
+        this.alunoRepository = alunoRepository;
+    }
 
     @Autowired
     private CursoRepository cursoRepository;
+
 
     public AlunoDTO buscarAluno(int matricula) throws DaoException {
         Aluno aluno = alunoRepository.findById(matricula)
@@ -28,17 +34,12 @@ public class AlunoService {
         return toDTO(aluno);
     }
 
-    public double calcularMensalidade(int matricula, double precoPorDisciplina) throws ServiceException {
-        try {
-            Aluno aluno = alunoRepository.findById(matricula)
-                    .orElseThrow(() -> new ServiceException("Aluno não encontrado"));
+    public double calcularMensalidade(int matricula) throws ServiceException {
+        Aluno aluno = alunoRepository.findByMatricula(matricula)
+                .orElseThrow(() -> new ServiceException("Aluno não encontrado"));
 
-            int quantidade = aluno.getInscricoes().size();
-            return quantidade * precoPorDisciplina;
-
-        } catch (Exception e) {
-            throw new ServiceException("Erro ao calcular mensalidade", e);
-        }
+        // Chama diretamente o método calcularMensalidade do Aluno
+        return aluno.calcularMensalidade();
     }
 
     public Collection<Aluno> listarAlunos() {

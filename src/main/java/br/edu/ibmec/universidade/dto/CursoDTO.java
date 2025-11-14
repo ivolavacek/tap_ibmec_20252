@@ -12,4 +12,5 @@ import lombok.AllArgsConstructor;
 public class CursoDTO {
 	private int codigo;
 	private String nome;
+    private double valorPorDisciplina ;
 }

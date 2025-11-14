@@ -6,6 +6,9 @@ import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 import br.edu.ibmec.universidade.service.AlunoService;
+import br.edu.ibmec.universidade.service.CursoService;
+import br.edu.ibmec.universidade.service.strategy.MensalidadePorDisciplinaStrategy;
+import br.edu.ibmec.universidade.service.strategy.MensalidadeStrategy;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +39,15 @@ public class AlunoResource {
     }
     @GetMapping("/{matricula}/mensalidade")
     @Operation(summary = "Calcula a mensalidade do aluno")
-    public ResponseEntity<Double> calcularMensalidade(
-            @PathVariable int matricula,
-            @RequestParam double precoPorDisciplina) throws ServiceException {
-
-        double mensalidade = alunoService.calcularMensalidade(matricula, precoPorDisciplina);
-        return ResponseEntity.ok(mensalidade);
+    public ResponseEntity<Double> calcularMensalidade(@PathVariable int matricula) throws ServiceException {
+        try {
+            // Recupera o aluno e calcula a mensalidade
+            double mensalidade = alunoService.calcularMensalidade(matricula);
+            return ResponseEntity.ok(mensalidade);
+        } catch (ServiceException e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro caso não encontre o aluno
+        }
     }
-
     @PostMapping(consumes = "application/json")
     @Operation(summary = "Cadastrar aluno")
     public ResponseEntity<Void> cadastrarAluno(@RequestBody AlunoDTO alunoDTO) {

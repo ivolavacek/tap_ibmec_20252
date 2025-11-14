@@ -30,11 +30,11 @@ public class UniversidadeApplication {
 			// -----------------------------
 			// CURSOS
 			// -----------------------------
-			Curso c1 = new Curso(1, "Ciência da Computação");
-			Curso c2 = new Curso(2, "Engenharia de Software");
-			Curso c3 = new Curso(3, "Sistemas de Informação");
-			Curso c4 = new Curso(4, "Engenharia Elétrica");
-			Curso c5 = new Curso(5, "Matemática Aplicada");
+			Curso c1 = new Curso(1, "Ciência da Computação",550.0);
+			Curso c2 = new Curso(2, "Engenharia de Software",480.0);
+			Curso c3 = new Curso(3, "Sistemas de Informação",515.0);
+			Curso c4 = new Curso(4, "Engenharia Elétrica",475.0);
+			Curso c5 = new Curso(5, "Matemática Aplicada",650.0);
 
 			cursoRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5));
 
@@ -94,21 +94,35 @@ public class UniversidadeApplication {
 
 			alunoRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6, a7, a8));
 
-			// -----------------------------
-			// INSCRIÇÕES
-			// -----------------------------
-			Inscricao i1 = new Inscricao(null, 8.5f, 7.5f, 8.0f, 2, "Aprovado", a1, t1);
-			Inscricao i2 = new Inscricao(null, 6.0f, 5.5f, 5.75f, 5, "Reprovado", a2, t2);
-			Inscricao i3 = new Inscricao(null, 9.0f, 8.0f, 8.5f, 1, "Aprovado", a3, t3);
-			Inscricao i4 = new Inscricao(null, 4.0f, 6.0f, 5.0f, 6, "Reprovado", a4, t4);
-			Inscricao i5 = new Inscricao(null, 7.0f, 7.5f, 7.25f, 3, "Aprovado", a5, t5);
-			Inscricao i6 = new Inscricao(null, 5.5f, 4.5f, 5.0f, 4, "Reprovado", a6, t6);
-			Inscricao i7 = new Inscricao(null, 8.0f, 9.0f, 8.5f, 2, "Aprovado", a7, t7);
-			Inscricao i8 = new Inscricao(null, 9.5f, 9.0f, 9.25f, 0, "Aprovado", a8, t8);
+            // -----------------------------
+            // INSCRIÇÕES
+            // -----------------------------
+            Inscricao i1 = new Inscricao(null, 8.5f, 7.5f, 8.0f, 2, "Aprovado", a1, t1);
+            Inscricao i2 = new Inscricao(null, 6.0f, 5.5f, 5.75f, 5, "Reprovado", a2, t2);
+            Inscricao i3 = new Inscricao(null, 9.0f, 8.0f, 8.5f, 1, "Aprovado", a3, t3);
+            Inscricao i4 = new Inscricao(null, 4.0f, 6.0f, 5.0f, 6, "Reprovado", a4, t4);
+            Inscricao i5 = new Inscricao(null, 7.0f, 7.5f, 7.25f, 3, "Aprovado", a5, t5);
+            Inscricao i6 = new Inscricao(null, 5.5f, 4.5f, 5.0f, 4, "Reprovado", a6, t6);
+            Inscricao i7 = new Inscricao(null, 8.0f, 9.0f, 8.5f, 2, "Aprovado", a7, t7);
+            Inscricao i8 = new Inscricao(null, 9.5f, 9.0f, 9.25f, 0, "Aprovado", a8, t8);
 
-			inscricaoRepository.saveAll(Arrays.asList(i1, i2, i3, i4, i5, i6, i7, i8));
+            // Adicionando as inscrições aos alunos
+            a1.addInscricao(i1); // Associar inscrição com aluno a1
+            a2.addInscricao(i2); // Associar inscrição com aluno a2
+            a3.addInscricao(i3); // Associar inscrição com aluno a3
+            a4.addInscricao(i4); // Associar inscrição com aluno a4
+            a5.addInscricao(i5); // Associar inscrição com aluno a5
+            a6.addInscricao(i6); // Associar inscrição com aluno a6
+            a7.addInscricao(i7); // Associar inscrição com aluno a7
+            a8.addInscricao(i8); // Associar inscrição com aluno a8
+
+            // Salvar inscrições
+            inscricaoRepository.saveAll(Arrays.asList(i1, i2, i3, i4, i5, i6, i7, i8));
 
 			System.out.println("✅ Banco H2 populado com dados iniciais");
-		};
+            System.out.println("Mensalidade João: " + a1.calcularMensalidade()); // 500 * 2 = 1000
+            System.out.println("Mensalidade Maria: " + a2.calcularMensalidade()); // 450 * 1 = 450
+
+        };
 	}
 }

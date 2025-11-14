@@ -27,7 +27,7 @@ public class EscolaDAO {
 		alunos = new HashMap<Integer, Aluno>();
 		cursos = new HashMap<Integer, Curso>();
 
-		Curso curso = new Curso(99, "Computacao");
+		Curso curso = new Curso(99, "Computacao",600);
 		try {
 			this.addCurso(curso);
 		} catch (DaoException e) {
