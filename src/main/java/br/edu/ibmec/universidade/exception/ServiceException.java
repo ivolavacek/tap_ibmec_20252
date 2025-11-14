@@ -1,7 +1,10 @@
 package br.edu.ibmec.universidade.exception;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 
+@Getter
 @SuppressWarnings("serial")
 public class ServiceException extends Exception {
 	private String message;
@@ -26,19 +29,14 @@ public class ServiceException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getMessage() {
-		return message;
+	public ServiceException(String erroAoListarInscrições, Exception e) {
 	}
 
 	public void setMessage(String msg) {
 		this.message = msg;
 	}
 
-	public ServiceExceptionEnum getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(ServiceExceptionEnum tipo) {
+    public void setTipo(ServiceExceptionEnum tipo) {
 		this.tipo = tipo;
 	}
 

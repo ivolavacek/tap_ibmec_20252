@@ -28,6 +28,19 @@ public class AlunoService {
         return toDTO(aluno);
     }
 
+    public double calcularMensalidade(int matricula, double precoPorDisciplina) throws ServiceException {
+        try {
+            Aluno aluno = alunoRepository.findById(matricula)
+                    .orElseThrow(() -> new ServiceException("Aluno não encontrado"));
+
+            int quantidade = aluno.getInscricoes().size();
+            return quantidade * precoPorDisciplina;
+
+        } catch (Exception e) {
+            throw new ServiceException("Erro ao calcular mensalidade", e);
+        }
+    }
+
     public Collection<Aluno> listarAlunos() {
         return alunoRepository.findAll();
     }

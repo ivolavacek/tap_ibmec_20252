@@ -34,6 +34,15 @@ public class AlunoResource {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{matricula}/mensalidade")
+    @Operation(summary = "Calcula a mensalidade do aluno")
+    public ResponseEntity<Double> calcularMensalidade(
+            @PathVariable int matricula,
+            @RequestParam double precoPorDisciplina) throws ServiceException {
+
+        double mensalidade = alunoService.calcularMensalidade(matricula, precoPorDisciplina);
+        return ResponseEntity.ok(mensalidade);
+    }
 
     @PostMapping(consumes = "application/json")
     @Operation(summary = "Cadastrar aluno")

@@ -1,5 +1,6 @@
-package main.java.br.edu.ibmec.universidade.entity;
+package br.edu.ibmec.universidade.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,11 @@ public class Inscricao {
     private String situacao;
 
     @ManyToOne
+    @JsonBackReference(value = "aluno-inscricoes")
     private Aluno aluno;
 
     @ManyToOne
+    @JsonBackReference(value = "turma-inscricoes")
     private Turma turma;
+
 }

@@ -13,7 +13,10 @@ public class DaoException extends Exception {
 		this.msg = msg;
 	}
 
-	public String getMessage() {
+    public DaoException(String erroAoSalvarInscrição, Exception e) {
+    }
+
+    public String getMessage() {
 		return msg;
 	}
 }

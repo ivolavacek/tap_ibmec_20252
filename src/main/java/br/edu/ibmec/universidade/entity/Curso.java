@@ -3,49 +3,49 @@ package br.edu.ibmec.universidade.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = "alunos")
+@ToString(exclude = {"alunos", "disciplinas"})
 @Entity
-
 public class Curso {
-    @Id
+
+	@Id
 	private int codigo;
+
 	private String nome;
 
-    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+	// ---- Relacionamento com DISCIPLINA (1:N) ----
+	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference(value = "curso-disciplina")
+	private List<Disciplina> disciplinas = new ArrayList<>();
+
+	// ---- Relacionamento com ALUNO (1:N) ----
+	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference(value = "curso-aluno")
 	private List<Aluno> alunos = new ArrayList<>();
-//	private List<Disciplina> disciplinas = new ArrayList<>();
-	
+
 	public Curso() {
-		
 	}
-	
+
 	public Curso(int codigo, String nome) {
 		this.codigo = codigo;
 		this.nome = nome;
 	}
 
+	// ----- Métodos auxiliares -----
+
 	public void addAluno(Aluno aluno) {
 		alunos.add(aluno);
+		aluno.setCurso(this);
 	}
 
 	public void removeAluno(Aluno aluno) {
 		alunos.remove(aluno);
+		aluno.setCurso(null);
 	}
-
-//	public void addDisciplina(Disciplina disciplina) {
-//		disciplinas.add(disciplina);
-//	}
-//
-//	public void removeDisciplina(Disciplina disciplina) {
-//		disciplinas.remove(disciplina);
-//	}
-
 }

@@ -3,6 +3,7 @@ package br.edu.ibmec.universidade.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -28,9 +29,11 @@ public class Aluno {
 
 	@ManyToOne
 	private Curso curso;
-	
+
 	@OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Inscricao> inscricoes = new ArrayList<>();
+	@JsonManagedReference(value = "aluno-inscricoes")
+	private List<Inscricao> inscricoes;
+
 
 	public Aluno() {
 

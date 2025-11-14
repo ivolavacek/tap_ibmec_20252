@@ -1,8 +1,9 @@
-package main.java.br.edu.ibmec.universidade.entity;
+package br.edu.ibmec.universidade.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Professor {
     private String nome;
 
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference(value = "professor-turma")
     private List<Turma> turmas = new ArrayList<>();
 
     public void addTurma(Turma turma) {

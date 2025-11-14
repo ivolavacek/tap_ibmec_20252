@@ -1,4 +1,4 @@
-package main.java.br.edu.ibmec.universidade.repository;
+package br.edu.ibmec.universidade.repository;
 
 import br.edu.ibmec.universidade.entity.Professor;
 import org.springframework.data.jpa.repository.JpaRepository;
