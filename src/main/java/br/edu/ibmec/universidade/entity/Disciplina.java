@@ -15,12 +15,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Disciplina {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int codigo;
     private String nome;
+
+    private int codigo;
 
     @ManyToOne
     @JsonBackReference(value = "curso-disciplina")

@@ -6,27 +6,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Inscricao {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float avaliacao1;
-    private float avaliacao2;
-    private float media;
-    private int numFaltas;
-    private String situacao;
-
-    @ManyToOne
-    @JsonBackReference(value = "aluno-inscricoes")
+    @ManyToOne(optional = false)
     private Aluno aluno;
 
-    @ManyToOne
-    @JsonBackReference(value = "turma-inscricoes")
+    @ManyToOne(optional = false)
     private Turma turma;
 
+    private LocalDate dataInscricao = LocalDate.now();
+
+    // Construtor obrigatório
+    public Inscricao(Aluno aluno, Turma turma) {
+        this.aluno = aluno;
+        this.turma = turma;
+    }
+
+    public Inscricao() {} // JPA
+
+    // getters
 }
+

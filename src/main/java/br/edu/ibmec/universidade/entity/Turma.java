@@ -15,16 +15,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Entity
 public class Turma {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int codigo;
-    private int ano;
-    private int semestre;
+    private String semestre;
 
-    @ManyToOne
-    @JsonBackReference(value = "disciplina-turma")
+    @ManyToOne(optional = false)
     private Disciplina disciplina;
 
     @ManyToOne

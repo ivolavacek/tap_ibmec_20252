@@ -15,11 +15,10 @@ import lombok.ToString;
 public class Curso {
 
 	@Id
-	private int codigo;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private String nome;
-
-    private double valorPorDisciplina;
 
     // ---- Relacionamento com DISCIPLINA (1:N) ----
 	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
