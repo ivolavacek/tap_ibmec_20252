@@ -22,21 +22,21 @@ public class TurmaResource {
         return service.listarTodos();
     }
 
-    @GetMapping("/{id}")
-    public Turma buscarPorId(@PathVariable Long id) throws ServiceException {
-        return service.buscarPorId(id);
-    }
+//    @GetMapping("/{id}")
+//    public Turma buscarPorId(@PathVariable Long id) throws ServiceException {
+//        return service.buscarPorId(id);
+//    }
 
     @PostMapping
     public Turma salvar(@RequestBody Turma turma) throws DaoException {
         return service.salvar(turma);
     }
 
-    @PutMapping("/{id}")
-    public Turma atualizar(@PathVariable Long id, @RequestBody Turma turma) throws DaoException {
-        turma.setId(id);
-        return service.salvar(turma);
-    }
+//    @PutMapping("/{id}")
+//    public Turma atualizar(@PathVariable Long id, @RequestBody Turma turma) throws DaoException {
+//        turma.setId(id);
+//        return service.salvar(turma);
+//    }
 
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) throws ServiceException {

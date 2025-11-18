@@ -6,21 +6,24 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
 @ToString(exclude = {"alunos", "disciplinas"})
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Curso {
-
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private int codigo;
 	private String nome;
-	private final double valorPorDisciplina;
+	private double valorPorDisciplina;
 
     // ---- Relacionamento com DISCIPLINA (1:N) ----
 	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)

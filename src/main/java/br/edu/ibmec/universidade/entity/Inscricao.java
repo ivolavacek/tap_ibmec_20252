@@ -1,6 +1,5 @@
 package br.edu.ibmec.universidade.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Inscricao {
@@ -25,14 +25,16 @@ public class Inscricao {
 
     private LocalDate dataInscricao = LocalDate.now();
 
+    // --- CAMPOS QUE SÓ SERÃO PREENCHIDOS DEPOIS ---
+    private Float avaliacao1;
+    private Float avaliacao2;
+    private Float media;
+    private Integer numFaltas;
+    private String situacao; // Aprovado, Reprovado etc.
+
     // Construtor obrigatório
     public Inscricao(Aluno aluno, Turma turma) {
         this.aluno = aluno;
         this.turma = turma;
     }
-
-    public Inscricao() {} // JPA
-
-    // getters
 }
-

@@ -21,10 +21,10 @@ public class InscricaoResource {
     @Autowired
     private InscricaoService inscricaoService;
 
-    @GetMapping
-    public List<Inscricao> listarTodos() throws ServiceException {
-        return inscricaoService.listarTodos();
-    }
+//    @GetMapping
+//    public List<Inscricao> listarTodos() throws ServiceException {
+//        return inscricaoService.listarTodos();
+//    }
 
     @GetMapping("/{id}")
     public Inscricao buscarPorId(@PathVariable Long id) throws ServiceException {
@@ -32,12 +32,7 @@ public class InscricaoResource {
     }
 
     @PostMapping
-    public Inscricao salvar(@RequestBody Inscricao inscricao) throws DaoException {
-        return inscricaoService.salvar(inscricao);
-    }
-
-    @PostMapping
-    public ResponseEntity<Inscricao> criar(@RequestBody CriarInscricaoDTO dto) {
+    public ResponseEntity<Inscricao> criar(@RequestBody CriarInscricaoDTO dto) throws DaoException {
         Inscricao inscricao = inscricaoService.criarInscricao(dto.getAlunoId(), dto.getTurmaId());
         return ResponseEntity.ok(inscricao);
     }

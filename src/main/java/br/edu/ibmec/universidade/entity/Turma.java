@@ -10,17 +10,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Turma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String semestre;
+    private Integer ano;
+
+    private Integer semestre;
+
+    private Integer codigo;
 
     @ManyToOne(optional = false)
     private Disciplina disciplina;

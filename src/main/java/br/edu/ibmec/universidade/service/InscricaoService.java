@@ -6,8 +6,8 @@ import br.edu.ibmec.universidade.entity.Aluno;
 import br.edu.ibmec.universidade.entity.Turma;
 import br.edu.ibmec.universidade.repository.AlunoRepository;
 import br.edu.ibmec.universidade.repository.TurmaRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ibmec.universidade.entity.Inscricao;
@@ -19,33 +19,61 @@ import br.edu.ibmec.universidade.repository.InscricaoRepository;
 @RequiredArgsConstructor
 public class InscricaoService {
 
-    @Autowired
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
     private final InscricaoRepository inscricaoRepository;
 
-    public Inscricao criarInscricao(Integer alunoId, Long turmaId) {
+    // -------------------------------------------------------------
+    // CRIAR INSCRIÇÃO (somente aluno + turma)
+    // -------------------------------------------------------------
+    @Transactional
+    public Inscricao criarInscricao(Integer alunoId, Long turmaId) throws DaoException {
 
         Aluno aluno = alunoRepository.findById(alunoId)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+                .orElseThrow(() -> new DaoException("Aluno não encontrado"));
 
         Turma turma = turmaRepository.findById(turmaId)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+                .orElseThrow(() -> new DaoException("Turma não encontrada"));
 
-        // 🔒 Regra 1: aluno só pode se inscrever em disciplina do seu curso
-        if (!aluno.getCurso().getId().equals(turma.getDisciplina().getCurso().getId())) {
-            throw new RuntimeException("Aluno não pode se inscrever em disciplina de outro curso");
+        if (aluno.getCurso() == null || turma.getDisciplina() == null || turma.getDisciplina().getCurso() == null) {
+            throw new DaoException("Dados incompletos para validação de curso");
         }
 
-        // 🔥 Criação obrigatória: aluno + turma
+        // se quiser validar curso, descomente:
+        // if (!aluno.getCurso().getCodigo().equals(turma.getDisciplina().getCurso().getCodigo())) {
+        //     throw new DaoException("Aluno não pode se inscrever em disciplina de outro curso");
+        // }
+
         Inscricao inscricao = new Inscricao(aluno, turma);
 
-        // Amarra bidirecional
         aluno.addInscricao(inscricao);
         turma.addInscricao(inscricao);
 
         return inscricaoRepository.save(inscricao);
     }
+
+    // -------------------------------------------------------------
+    // ATUALIZAR NOTAS E FALTAS
+    // -------------------------------------------------------------
+    @Transactional
+    public Inscricao atualizarNotasEFaltas(Long inscricaoId, Float avaliacao1, Float avaliacao2, Float media,
+                                           Integer numFaltas, String situacao) throws DaoException {
+
+        Inscricao inscricao = inscricaoRepository.findById(inscricaoId)
+                .orElseThrow(() -> new DaoException("Inscrição não encontrada"));
+
+        if (avaliacao1 != null) inscricao.setAvaliacao1(avaliacao1);
+        if (avaliacao2 != null) inscricao.setAvaliacao2(avaliacao2);
+        if (media != null) inscricao.setMedia(media);
+        if (numFaltas != null) inscricao.setNumFaltas(numFaltas);
+        if (situacao != null) inscricao.setSituacao(situacao);
+
+        return inscricaoRepository.save(inscricao);
+    }
+
+    // -------------------------------------------------------------
+    // OUTROS MÉTODOS
+    // -------------------------------------------------------------
 
     public List<Inscricao> listarTodos() throws ServiceException {
         try {
@@ -59,13 +87,13 @@ public class InscricaoService {
         Inscricao inscricao = new Inscricao();
         inscricao.setAluno(aluno);
         inscricao.setTurma(turma);
-        // Setando as avaliações, faltas e situação, caso necessário.
         aluno.addInscricao(inscricao);
     }
 
     public Inscricao buscarPorId(Long id) throws ServiceException {
         try {
-            return inscricaoRepository.findById(id).orElseThrow(() -> new ServiceException("Inscrição não encontrada"));
+            return inscricaoRepository.findById(id)
+                    .orElseThrow(() -> new ServiceException("Inscrição não encontrada"));
         } catch (Exception e) {
             throw new ServiceException("Erro ao buscar inscrição", e);
         }
@@ -86,8 +114,4 @@ public class InscricaoService {
             throw new ServiceException("Erro ao deletar inscrição", e);
         }
     }
-
-
-
-
 }

@@ -22,21 +22,21 @@ public class ProfessorResource {
         return service.listarTodos();
     }
 
-    @GetMapping("/{id}")
-    public Professor buscarPorId(@PathVariable Long id) throws ServiceException {
-        return service.buscarPorId(id);
-    }
+//    @GetMapping("/{id}")
+//    public Professor buscarPorId(@PathVariable Long id) throws ServiceException {
+//        return service.buscarPorId(id);
+//    }
 
     @PostMapping
     public Professor salvar(@RequestBody Professor professor) throws DaoException {
         return service.salvar(professor);
     }
 
-    @PutMapping("/{id}")
-    public Professor atualizar(@PathVariable Long id, @RequestBody Professor professor) throws DaoException {
-        professor.setId(id);
-        return service.salvar(professor);
-    }
+//    @PutMapping("/{id}")
+//    public Professor atualizar(@PathVariable Long id, @RequestBody Professor professor) throws DaoException {
+//        professor.setId(id);
+//        return service.salvar(professor);
+//    }
 
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) throws ServiceException {

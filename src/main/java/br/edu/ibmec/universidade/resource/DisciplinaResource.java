@@ -30,10 +30,10 @@ public class DisciplinaResource {
         return service.listarTodos();
     }
 
-    @GetMapping("/{id}")
-    public Disciplina buscarPorId(@PathVariable Long id) throws ServiceException {
-        return service.buscarPorId(id);
-    }
+//    @GetMapping("/{id}")
+//    public Disciplina buscarPorId(@PathVariable Long id) throws ServiceException {
+//        return service.buscarPorId(id);
+//    }
 
     @PostMapping
     @Operation(summary = "Criar disciplina e gerar turma automaticamente")
