@@ -14,11 +14,13 @@ import lombok.ToString;
 @Entity
 public class Curso {
 
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	private int codigo;
 	private String nome;
+	private final double valorPorDisciplina;
 
     // ---- Relacionamento com DISCIPLINA (1:N) ----
 	@OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -30,11 +32,12 @@ public class Curso {
 	@JsonManagedReference(value = "curso-aluno")
 	private List<Aluno> alunos = new ArrayList<>();
 
-    public Curso() {
+    public Curso(double valorPorDisciplina) {
+        this.valorPorDisciplina = valorPorDisciplina;
     }
 
     public Curso(int codigo, String nome, double valorPorDisciplina) {
-        this.codigo = codigo;
+        this.codigo =  codigo;
         this.nome = nome;
         this.valorPorDisciplina = valorPorDisciplina;
     }
