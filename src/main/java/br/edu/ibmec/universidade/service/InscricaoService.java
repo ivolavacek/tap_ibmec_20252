@@ -1,6 +1,7 @@
 package br.edu.ibmec.universidade.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import br.edu.ibmec.universidade.entity.Aluno;
 import br.edu.ibmec.universidade.entity.Turma;
@@ -14,6 +15,7 @@ import br.edu.ibmec.universidade.entity.Inscricao;
 import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.repository.InscricaoRepository;
+import br.edu.ibmec.universidade.service.strategy.ApprovalStrategy;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class InscricaoService {
     private final AlunoRepository alunoRepository;
     private final TurmaRepository turmaRepository;
     private final InscricaoRepository inscricaoRepository;
+    private final ApprovalStrategy approvalStrategy;
 
     // -------------------------------------------------------------
     // CRIAR INSCRIÇÃO (somente aluno + turma)
@@ -39,10 +42,16 @@ public class InscricaoService {
             throw new DaoException("Dados incompletos para validação de curso");
         }
 
-        // se quiser validar curso, descomente:
-        // if (!aluno.getCurso().getCodigo().equals(turma.getDisciplina().getCurso().getCodigo())) {
-        //     throw new DaoException("Aluno não pode se inscrever em disciplina de outro curso");
-        // }
+        // validação: aluno só pode inscrever em disciplinas do próprio curso
+        if (!Objects.equals(aluno.getCurso().getCodigo(), turma.getDisciplina().getCurso().getCodigo())) {
+            throw new DaoException("Aluno não pode se inscrever em disciplina de outro curso");
+        }
+
+        // evita inscrição duplicada (se repository suportar método). Caso não exista, comente essa verificação e eu crio o repo method.
+        boolean jaInscrito = inscricaoRepository.existsByAlunoMatriculaAndTurmaId(alunoId, turmaId);
+        if (jaInscrito) {
+            throw new DaoException("Aluno já inscrito nesta turma");
+        }
 
         Inscricao inscricao = new Inscricao(aluno, turma);
 
@@ -53,22 +62,52 @@ public class InscricaoService {
     }
 
     // -------------------------------------------------------------
-    // ATUALIZAR NOTAS E FALTAS
+    // ATUALIZAR NOTAS / MEDIA / FALTAS / SITUACAO - métodos específicos
     // -------------------------------------------------------------
     @Transactional
-    public Inscricao atualizarNotasEFaltas(Long inscricaoId, Float avaliacao1, Float avaliacao2, Float media,
-                                           Integer numFaltas, String situacao) throws DaoException {
+    public Inscricao atualizarAvaliacao1(Long inscricaoId, Float avaliacao1) throws DaoException {
+        Inscricao inscricao = findInscricaoOrThrow(inscricaoId);
+        inscricao.setAvaliacao1(avaliacao1);
+        // opcional: recalcular media se quiser aqui
+        return inscricaoRepository.save(inscricao);
+    }
 
-        Inscricao inscricao = inscricaoRepository.findById(inscricaoId)
-                .orElseThrow(() -> new DaoException("Inscrição não encontrada"));
+    @Transactional
+    public Inscricao atualizarAvaliacao2(Long inscricaoId, Float avaliacao2) throws DaoException {
+        Inscricao inscricao = findInscricaoOrThrow(inscricaoId);
+        inscricao.setAvaliacao2(avaliacao2);
+        return inscricaoRepository.save(inscricao);
+    }
 
-        if (avaliacao1 != null) inscricao.setAvaliacao1(avaliacao1);
-        if (avaliacao2 != null) inscricao.setAvaliacao2(avaliacao2);
-        if (media != null) inscricao.setMedia(media);
-        if (numFaltas != null) inscricao.setNumFaltas(numFaltas);
-        if (situacao != null) inscricao.setSituacao(situacao);
+    @Transactional
+    public Inscricao atualizarMedia(Long inscricaoId, Float media) throws DaoException {
+        Inscricao inscricao = findInscricaoOrThrow(inscricaoId);
+        inscricao.setMedia(media);
+
+        // atualiza a situacao automaticamente usando a strategy de approval
+        String situacao = approvalStrategy.calcularSituacao(inscricao);
+        inscricao.setSituacao(situacao);
 
         return inscricaoRepository.save(inscricao);
+    }
+
+    @Transactional
+    public Inscricao atualizarFaltas(Long inscricaoId, Integer numFaltas) throws DaoException {
+        Inscricao inscricao = findInscricaoOrThrow(inscricaoId);
+        inscricao.setNumFaltas(numFaltas);
+        return inscricaoRepository.save(inscricao);
+    }
+
+    @Transactional
+    public Inscricao atualizarSituacao(Long inscricaoId, String situacao) throws DaoException {
+        Inscricao inscricao = findInscricaoOrThrow(inscricaoId);
+        inscricao.setSituacao(situacao);
+        return inscricaoRepository.save(inscricao);
+    }
+
+    private Inscricao findInscricaoOrThrow(Long inscricaoId) throws DaoException {
+        return inscricaoRepository.findById(inscricaoId)
+                .orElseThrow(() -> new DaoException("Inscrição não encontrada"));
     }
 
     // -------------------------------------------------------------
@@ -81,13 +120,6 @@ public class InscricaoService {
         } catch (Exception e) {
             throw new ServiceException("Erro ao listar inscrições", e);
         }
-    }
-
-    public void inscreverAlunoEmTurma(Aluno aluno, Turma turma) {
-        Inscricao inscricao = new Inscricao();
-        inscricao.setAluno(aluno);
-        inscricao.setTurma(turma);
-        aluno.addInscricao(inscricao);
     }
 
     public Inscricao buscarPorId(Long id) throws ServiceException {

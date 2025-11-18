@@ -42,31 +42,32 @@ public class UniversidadeApplication {
 			// -----------------------------
 			// PROFESSORES
 			// -----------------------------
-			Professor p1 = new Professor(null, "Carlos Silva", null);
-			Professor p2 = new Professor(null, "Ana Souza", null);
-			Professor p3 = new Professor(null, "Ricardo Almeida", null);
-			Professor p4 = new Professor(null, "Marina Castro", null);
-			Professor p5 = new Professor(null, "Fernanda Rocha", null);
-			Professor p6 = new Professor(null, "Eduardo Rezende", null);
+			Professor p1 = new Professor(null, "Carlos Silva", new ArrayList<>());
+			Professor p2 = new Professor(null, "Ana Souza", new ArrayList<>());
+			Professor p3 = new Professor(null, "Ricardo Almeida", new ArrayList<>());
+			Professor p4 = new Professor(null, "Marina Castro", new ArrayList<>());
+			Professor p5 = new Professor(null, "Fernanda Rocha", new ArrayList<>());
+			Professor p6 = new Professor(null, "Eduardo Rezende", new ArrayList<>());
 
 			professorRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6));
 
-			// -----------------------------
-			// DISCIPLINAS
-			// -----------------------------
-			Disciplina d1 = new Disciplina(null, "Algoritmos", 101, c1, null);
-			Disciplina d2 = new Disciplina(null, "Banco de Dados", 102, c2, null);
-			Disciplina d3 = new Disciplina(null, "Estruturas de Dados", 103, c1, null);
-			Disciplina d4 = new Disciplina(null, "Redes de Computadores", 104, c3, null);
-			Disciplina d5 = new Disciplina(null, "Probabilidade e Estatística", 105, c5, null);
-			Disciplina d6 = new Disciplina(null, "Cálculo 1", 106, c5, null);
-			Disciplina d7 = new Disciplina(null, "Engenharia de Requisitos", 107, c2, null);
-			Disciplina d8 = new Disciplina(null, "Circuitos Elétricos", 108, c4, null);
+
+			// --------------------------------
+			// DISCIPLINAS (SEM turmas)
+			// --------------------------------
+			Disciplina d1 = new Disciplina(null, "Algoritmos", 101, c1, new ArrayList<>());
+			Disciplina d2 = new Disciplina(null, "Banco de Dados", 102, c2, new ArrayList<>());
+			Disciplina d3 = new Disciplina(null, "Estruturas de Dados", 103, c1, new ArrayList<>());
+			Disciplina d4 = new Disciplina(null, "Redes de Computadores", 104, c3, new ArrayList<>());
+			Disciplina d5 = new Disciplina(null, "Probabilidade e Estatística", 105, c5, new ArrayList<>());
+			Disciplina d6 = new Disciplina(null, "Cálculo 1", 106, c5, new ArrayList<>());
+			Disciplina d7 = new Disciplina(null, "Engenharia de Requisitos", 107, c2, new ArrayList<>());
+			Disciplina d8 = new Disciplina(null, "Circuitos Elétricos", 108, c4, new ArrayList<>());
 
 			disciplinaRepository.saveAll(Arrays.asList(d1, d2, d3, d4, d5, d6, d7, d8));
 
 			// -----------------------------
-			// TURMAS (ano, semestre, codigo)
+			// TURMAS
 			// -----------------------------
 			Turma t1 = new Turma(null, 2024, 1, 1001, d1, p1, new ArrayList<>());
 			Turma t2 = new Turma(null, 2024, 2, 1002, d2, p2, new ArrayList<>());
@@ -79,25 +80,55 @@ public class UniversidadeApplication {
 
 			turmaRepository.saveAll(Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8));
 
+			// adiciona as turmas aos professores (lado bidirecional)
+			p1.getTurmas().add(t1);
+			p2.getTurmas().addAll(Arrays.asList(t2, t7));
+			p3.getTurmas().add(t3);
+			p4.getTurmas().addAll(Arrays.asList(t4, t8));
+			p5.getTurmas().add(t5);
+			p6.getTurmas().add(t6);
+
+			professorRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6));
+
 			// -----------------------------
 			// ALUNOS
 			// -----------------------------
 			DataNascimento dn = new DataNascimento(10, 10, 2000);
 
-			Aluno a1 = new Aluno(1, "João", dn, true, EstadoCivil.solteiro, c1, Arrays.asList("99999-1111"));
-			Aluno a2 = new Aluno(2, "Maria", dn, true, EstadoCivil.casado, c2, Arrays.asList("99999-2222"));
-			Aluno a3 = new Aluno(3, "Pedro", dn, true, EstadoCivil.solteiro, c1, Arrays.asList("99999-3333"));
-			Aluno a4 = new Aluno(4, "Julia", dn, true, EstadoCivil.solteiro, c3, Arrays.asList("99999-4444"));
-			Aluno a5 = new Aluno(5, "Miguel", dn, true, EstadoCivil.solteiro, c4, Arrays.asList("99999-5555"));
-			Aluno a6 = new Aluno(6, "Sofia", dn, true, EstadoCivil.casado, c5, Arrays.asList("99999-6666"));
-			Aluno a7 = new Aluno(7, "Paulo", dn, true, EstadoCivil.solteiro, c2, Arrays.asList("99999-7777"));
-			Aluno a8 = new Aluno(8, "Larissa", dn, true, EstadoCivil.solteiro, c3, Arrays.asList("99999-8888"));
+			Aluno a1 = new Aluno(1, "João", dn, true, EstadoCivil.SOLTEIRO, c1, Arrays.asList("99999-1111"));
+			Aluno a2 = new Aluno(2, "Maria", dn, true, EstadoCivil.CASADO, c2, Arrays.asList("99999-2222"));
+			Aluno a3 = new Aluno(3, "Pedro", dn, true, EstadoCivil.SOLTEIRO, c1, Arrays.asList("99999-3333"));
+			Aluno a4 = new Aluno(4, "Julia", dn, true, EstadoCivil.SOLTEIRO, c3, Arrays.asList("99999-4444"));
+			Aluno a5 = new Aluno(5, "Miguel", dn, true, EstadoCivil.SOLTEIRO, c4, Arrays.asList("99999-5555"));
+			Aluno a6 = new Aluno(6, "Sofia", dn, true, EstadoCivil.CASADO, c5, Arrays.asList("99999-6666"));
+			Aluno a7 = new Aluno(7, "Paulo", dn, true, EstadoCivil.SOLTEIRO, c2, Arrays.asList("99999-7777"));
+			Aluno a8 = new Aluno(8, "Larissa", dn, true, EstadoCivil.SOLTEIRO, c3, Arrays.asList("99999-8888"));
 
 			alunoRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6, a7, a8));
 
+			// -----------------------------
+			// INSCRIÇÕES
+			// -----------------------------
+			Inscricao i1 = new Inscricao(a1, t1);
+			Inscricao i2 = new Inscricao(a2, t2);
+			Inscricao i3 = new Inscricao(a3, t3);
+			Inscricao i4 = new Inscricao(a4, t4);
+			Inscricao i5 = new Inscricao(a1, t2); // João em outra turma
+			Inscricao i6 = new Inscricao(a5, t7);
+
+			inscricaoRepository.saveAll(Arrays.asList(i1, i2, i3, i4, i5, i6));
+
+			// adiciona nas turmas (LADO DONO não é aqui, mas mantém a consistência)
+			t1.getInscricoes().add(i1);
+			t2.getInscricoes().add(i2);
+			t3.getInscricoes().add(i3);
+			t4.getInscricoes().add(i4);
+			t2.getInscricoes().add(i5);
+			t7.getInscricoes().add(i6);
+
+			turmaRepository.saveAll(Arrays.asList(t1, t2, t3, t4, t7));
 
 			System.out.println("✅ Banco inicial populado com sucesso!");
-
 		};
 	}
 }

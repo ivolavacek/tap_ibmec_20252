@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,6 +15,10 @@ public class DataNascimento {
     private int dia;
     private int mes;
     private int ano;
+
+    public LocalDate toLocalDate() {
+        return LocalDate.of(ano, mes, dia);
+    }
 
     @Override
     public String toString() {

@@ -6,12 +6,12 @@ import br.edu.ibmec.universidade.exception.DaoException;
 import br.edu.ibmec.universidade.exception.ServiceException;
 import br.edu.ibmec.universidade.exception.ServiceException.ServiceExceptionEnum;
 import br.edu.ibmec.universidade.service.AlunoService;
-import br.edu.ibmec.universidade.service.CursoService;
-import br.edu.ibmec.universidade.service.strategy.MensalidadePorDisciplinaStrategy;
-import br.edu.ibmec.universidade.service.strategy.MensalidadeStrategy;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,46 +25,37 @@ import java.util.stream.Collectors;
 @Tag(name = "Alunos", description = "Operações de gestão de alunos")
 public class AlunoResource {
 
-    private final AlunoService alunoService; // injetado via construtor (Lombok)
+    private final AlunoService alunoService;
 
     @GetMapping("/{matricula}")
     @Operation(summary = "Buscar aluno por matrícula")
     public ResponseEntity<AlunoDTO> buscarAluno(@PathVariable int matricula) {
         try {
-            AlunoDTO dto = alunoService.buscarAluno(matricula);
-            return ResponseEntity.ok(dto);
+            return ResponseEntity.ok(alunoService.buscarAluno(matricula));
         } catch (DaoException e) {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/{matricula}/mensalidade")
     @Operation(summary = "Calcula a mensalidade do aluno")
-    public ResponseEntity<Double> calcularMensalidade(@PathVariable int matricula) throws ServiceException {
+    public ResponseEntity<Double> calcularMensalidade(@PathVariable int matricula) {
         try {
-            // Recupera o aluno e calcula a mensalidade
-            double mensalidade = alunoService.calcularMensalidade(matricula);
-            return ResponseEntity.ok(mensalidade);
-        } catch (ServiceException e) {
-            return ResponseEntity.badRequest().body(null); // Retorna erro caso não encontre o aluno
+            double valor = alunoService.calcularMensalidade(matricula);
+            return ResponseEntity.ok(valor);
+        } catch (DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", e.getMessage()).body(null);
         }
     }
+
     @PostMapping(consumes = "application/json")
     @Operation(summary = "Cadastrar aluno")
     public ResponseEntity<Void> cadastrarAluno(@RequestBody AlunoDTO alunoDTO) {
         try {
             alunoService.cadastrarAluno(alunoDTO);
             return ResponseEntity.created(URI.create("/alunos/" + alunoDTO.getMatricula())).build();
-        } catch (ServiceException e) {
-            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
-                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
-            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
-                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
-            } else {
-                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
-            }
-        } catch (DaoException e) {
-            e.printStackTrace();  // imprimir no log para ver o erro
-            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados: " + e.getMessage()).build();
+        } catch (ServiceException | DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
         }
     }
 
@@ -73,17 +64,9 @@ public class AlunoResource {
     public ResponseEntity<Void> alterarAluno(@RequestBody AlunoDTO alunoDTO) {
         try {
             alunoService.alterarAluno(alunoDTO);
-            return ResponseEntity.created(URI.create("/alunos/" + alunoDTO.getMatricula())).build();
-        } catch (ServiceException e) {
-            if (e.getTipo() == ServiceExceptionEnum.CURSO_CODIGO_INVALIDO) {
-                return ResponseEntity.badRequest().header("Motivo", "Código inválido").build();
-            } else if (e.getTipo() == ServiceExceptionEnum.CURSO_NOME_INVALIDO) {
-                return ResponseEntity.badRequest().header("Motivo", "Nome inválido").build();
-            } else {
-                return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
-            }
-        } catch (DaoException e) {
-            return ResponseEntity.badRequest().header("Motivo", "Erro no banco de dados").build();
+            return ResponseEntity.ok().build();
+        } catch (ServiceException | DaoException e) {
+            return ResponseEntity.badRequest().header("Motivo", e.getMessage()).build();
         }
     }
 
@@ -98,13 +81,14 @@ public class AlunoResource {
         }
     }
 
-    @GetMapping(produces = "application/json")
+    @GetMapping
     @Operation(summary = "Listar nomes")
     public ResponseEntity<List<String>> listarAlunos() {
         List<String> nomes = alunoService.listarAlunos()
                 .stream()
                 .map(Aluno::getNome)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(nomes);
     }
 }
